@@ -5,6 +5,7 @@ import strategiesData from './data/strategies.json';
 import { calculateCCTP } from './utils/cctp';
 import { StockfishEngine } from './engine/stockfish';
 import { Peer } from 'peerjs';
+import { QRCodeSVG } from 'qrcode.react';
 
 // Custom Chessboard Component with smooth FLIP transitions and inline hover hooks
 function CustomChessboard({ 
@@ -205,12 +206,14 @@ function App() {
   });
 
   const [showResetSuccess, setShowResetSuccess] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [copyToast, setCopyToast] = useState(false); // toast for copy peer id feedback
 
   // Mobile Tab State
   const [mobileTab, setMobileTab] = useState('mine'); // 'mine' or 'opp'
 
-  const [view, setView] = useState('home'); // home, color-select, opponent-strategy-select, black-defense-select, trainer, multiplayer-lobby
-  const [gameMode, setGameMode] = useState('strategy'); // strategy, ai-coach, multiplayer
+  const [view, setView] = useState('home'); // home, color-select, opponent-strategy-select, black-defense-select, trainer, multiplayer-lobby, simulation-color-select
+  const [gameMode, setGameMode] = useState('strategy'); // strategy, ai-coach, multiplayer, local-vs-local, simulation
   const [selectedStrategy, setSelectedStrategy] = useState(null);
   const [whiteStrategy, setWhiteStrategy] = useState(null); // White's selected opening for Black training
   const [userColor, setUserColor] = useState('w'); // 'w' or 'b'
@@ -250,6 +253,8 @@ function App() {
   const [engine, setEngine] = useState(null);
   const [bestMove, setBestMove] = useState(null);
   const [hoveredOpponentCCTP, setHoveredOpponentCCTP] = useState(null);
+  // Tap-to-preview state for touch interfaces (replaces hover-only interactions)
+  const [selectedMovePreview, setSelectedMovePreview] = useState(null); // move object currently tapped/selected for preview
 
   // Deviation States
   const [deviated, setDeviated] = useState(false);
@@ -340,6 +345,40 @@ function App() {
     return () => sf.terminate();
   }, []);
 
+  // On mount: read ?peer= URL param and pre-fill peerTargetId for auto-connect via QR scan
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const peerParam = params.get('peer');
+    if (peerParam) {
+      setPeerTargetId(peerParam);
+      // Automatically open the multiplayer lobby when landing via QR link
+      setGameMode('multiplayer');
+      setView('multiplayer-lobby');
+      // Initialize PeerJS for this guest (so they can connect to the host)
+      setConnectionStatus('connecting');
+      const p = new Peer();
+      p.on('open', (id) => {
+        setPeerId(id);
+        setConnectionStatus('ready');
+      });
+      p.on('connection', (incomingConn) => {
+        setUserColor('w');
+        incomingConn.on('open', () => {
+          setConn(incomingConn);
+          setConnectionStatus('connected');
+          setMultiplayerMessages([{ sender: 'system', text: "Friend connected! You are White. Make your first move." }]);
+          game.reset();
+          setLastMove(null);
+          forceUpdate();
+          setView('trainer');
+        });
+        setupConnectionListeners(incomingConn);
+      });
+      p.on('error', () => setConnectionStatus('disconnected'));
+      setPeer(p);
+    }
+  }, []);
+
   // Reset states on strategy change
   useEffect(() => {
     setDeviated(false);
@@ -398,6 +437,9 @@ function App() {
     // PAUSE opponent response while quiz is active
     if (activeQuestion || quizFeedback) return;
 
+    // In local vs local or simulation, there's no automated opponent - both players click manually
+    if (gameMode === 'local-vs-local' || gameMode === 'simulation') return;
+
     if (view === 'trainer' && game.turn() !== userColor && !game.isGameOver()) {
       const timer = setTimeout(() => {
         let movePlayed = false;
@@ -408,40 +450,30 @@ function App() {
           movePlayed = true;
         }
 
-        // 2. In Strategy Mode: try to play strategy move if we haven't deviated
-        if (!movePlayed && gameMode === 'strategy' && !deviated && selectedStrategy && selectedStrategy.lines && selectedStrategy.lines[0]) {
-          const temp = new Chess(selectedStrategy.startingFen || undefined);
+        // 2. In Strategy Mode during teaching phase: opponent plays a RANDOM legal move (not the strategy line)
+        if (!movePlayed && gameMode === 'strategy' && !deviated && selectedStrategy?.lines?.[0]) {
           const lineMoves = selectedStrategy.lines[0].moves;
           const history = game.history();
-          let match = true;
           
-          for (let i = 0; i < history.length; i++) {
-            try {
-              temp.move(history[i]);
-            } catch (e) {
-              match = false;
-              break;
-            }
-          }
-
-          if (match && history.length < lineMoves.length) {
-            const nextMoveSan = lineMoves[history.length];
-            try {
-              const nextMove = temp.move(nextMoveSan);
-              makeMove(nextMove, true); // True represents opponent auto-move
+          if (history.length < lineMoves.length) {
+            // Still inside the strategy teaching phase - play a random legal move
+            const legalMoves = game.moves({ verbose: true });
+            if (legalMoves.length > 0) {
+              const randomMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+              makeMove(randomMove, true);
               movePlayed = true;
-            } catch (e) {}
+            }
           }
         }
 
-        // 3. In Strategy Mode: fallback to Stockfish best move
+        // 3. In Strategy Mode: after strategy line is exhausted, switch to Stockfish AI
         if (!movePlayed && gameMode === 'strategy' && bestMove) {
-          if (!deviated && selectedStrategy && selectedStrategy.lines && selectedStrategy.lines[0]) {
+          if (!deviated && selectedStrategy?.lines?.[0]) {
             const history = game.history();
             const lineMoves = selectedStrategy.lines[0].moves;
             if (history.length >= lineMoves.length) {
               setDeviated(true);
-              setDeviationMsg(`Strategy line completed! Stockfish live analysis is now guiding the rest of the game.`);
+              setDeviationMsg(`Strategy line completed! AI engine is now guiding the rest of the game.`);
             }
           }
           makeMove(bestMove, true);
@@ -642,13 +674,23 @@ function App() {
 
   // Automatically trigger CCTP search priority quiz at the start of the user's turn
   useEffect(() => {
-    if (view === 'trainer' && gameMode !== 'multiplayer' && quizEnabled && game.turn() === userColor && !game.isGameOver()) {
+    const noQuizModes = ['multiplayer', 'local-vs-local', 'simulation'];
+    if (view === 'trainer' && !noQuizModes.includes(gameMode) && quizEnabled && game.turn() === userColor && !game.isGameOver()) {
       const timer = setTimeout(() => {
         triggerCurrentCctpQuiz();
       }, 400);
       return () => clearTimeout(timer);
     }
   }, [game, tick, userColor, view, quizEnabled, gameMode]);
+
+  // Trigger confetti celebration when checkmate occurs in any mode
+  useEffect(() => {
+    if (view === 'trainer' && game.isCheckmate()) {
+      setShowConfetti(true);
+      const t = setTimeout(() => setShowConfetti(false), 4500);
+      return () => clearTimeout(t);
+    }
+  }, [game, tick, view]);
 
   // Metrics savers
   const saveStrategyMetric = (strategy) => {
@@ -782,14 +824,18 @@ function App() {
       return;
     }
 
+    // In local-vs-local and simulation modes, both sides can always move freely
+    const isLocalMode = gameMode === 'local-vs-local' || gameMode === 'simulation';
+    const activeColor = isLocalMode ? game.turn() : userColor;
+
     // Only allow moving on player's correct turn
-    if (game.turn() !== userColor) {
+    if (!isLocalMode && game.turn() !== userColor) {
       return;
     }
 
     if (!selectedSquare) {
       const piece = game.get(square);
-      if (piece && piece.color === userColor) {
+      if (piece && piece.color === activeColor) {
         setSelectedSquare(square);
         getMoveOptions(square);
       }
@@ -804,7 +850,7 @@ function App() {
         makeMove(foundMove);
       } else {
         const piece = game.get(square);
-        if (piece && piece.color === userColor) {
+        if (piece && piece.color === activeColor) {
           setSelectedSquare(square);
           getMoveOptions(square);
         } else {
@@ -815,10 +861,11 @@ function App() {
     }
   };
 
-  // Compute preview for opponent replies when hovering over a move
+  // Compute preview for opponent replies when hovering over a move (or tapping on touch)
   const handleMouseEnterMove = (move) => {
     if (isAnimating || activeQuestion) return;
     setHoveredMove(move);
+    setSelectedMovePreview(move);
     
     const tempGame = new Chess(game.fen());
     try {
@@ -834,8 +881,22 @@ function App() {
   };
 
   const handleMouseLeaveMove = () => {
+    // On mouse devices: clear on leave. On touch: keep selected until tapped again.
     setHoveredMove(null);
-    setHoveredOpponentCCTP(null);
+    // Don't clear hoveredOpponentCCTP here - it stays until next tap/hover or board click
+  };
+
+  // Tap handler for touch interfaces - toggle preview on/off
+  const handleTapMove = (move) => {
+    if (isAnimating || activeQuestion) return;
+    if (selectedMovePreview && selectedMovePreview.from === move.from && selectedMovePreview.to === move.to) {
+      // Tapping the same move again clears the preview
+      setSelectedMovePreview(null);
+      setHoveredMove(null);
+      setHoveredOpponentCCTP(null);
+    } else {
+      handleMouseEnterMove(move);
+    }
   };
 
   // Mouse hover trigger directly on chessboard squares (to update right-pane blunder check)
@@ -854,7 +915,8 @@ function App() {
   };
 
   const onSquareMouseLeave = () => {
-    handleMouseLeaveMove();
+    setHoveredMove(null);
+    // Keep selectedMovePreview active for touch users
   };
 
   // Selection Card Router
@@ -890,6 +952,26 @@ function App() {
     setSelectedStrategy(strat);
     saveStrategyMetric(strat);
     setView('color-select');
+  };
+
+  const startLocalVsLocal = () => {
+    setGameMode('local-vs-local');
+    const strat = { name: "Local vs Local", description: "Two players take turns on the same device. No AI recommendations." };
+    setSelectedStrategy(strat);
+    game.reset();
+    setUserColor('w'); // White always starts; both sides can move
+    setLastMove(null);
+    setDeviated(false);
+    setDeviationMsg('');
+    forceUpdate();
+    setView('trainer');
+  };
+
+  const startSimulation = () => {
+    setGameMode('simulation');
+    const strat = { name: "Simulation", description: "Choose a side and simulate a local match. No AI recommendations." };
+    setSelectedStrategy(strat);
+    setView('simulation-color-select');
   };
 
   // Compute arrows for chessboard
@@ -1021,44 +1103,50 @@ function App() {
   };
 
   // Build the dedicated "Recommended Moves" array for the user's turn
+  // In strategy mode: only show AI recommendations AFTER the strategy line is fully taught
+  const strategyLineMoves = (gameMode === 'strategy' && selectedStrategy?.lines?.[0]?.moves) || [];
+  const strategyTaught = strategyLineMoves.length > 0 && game.history().length >= strategyLineMoves.length;
   const recommendedMoves = [];
   
-  if (bestMove && game.turn() === userColor) {
-    recommendedMoves.push({
-      ...bestMove,
-      type: 'best'
-    });
-  }
-
-  if (gameMode === 'strategy' && selectedStrategy && selectedStrategy.lines && selectedStrategy.lines[0] && !deviated) {
-    const temp = new Chess(selectedStrategy.startingFen || undefined);
-    const lineMoves = selectedStrategy.lines[0].moves;
-    const history = game.history();
-    let match = true;
-    
-    for (let i = 0; i < history.length; i++) {
-      try {
-        temp.move(history[i]);
-      } catch (e) {
-        match = false;
-        break;
-      }
+  if (game.turn() === userColor) {
+    // Show AI best move only if: not in strategy mode OR strategy is fully taught
+    if (bestMove && (gameMode !== 'strategy' || strategyTaught || deviated)) {
+      recommendedMoves.push({
+        ...bestMove,
+        type: 'best'
+      });
     }
 
-    if (match && history.length < lineMoves.length) {
-      const nextMoveSan = lineMoves[history.length];
-      try {
-        const nextMove = temp.move(nextMoveSan);
-        const existingIdx = recommendedMoves.findIndex(m => m.from === nextMove.from && m.to === nextMove.to);
-        if (existingIdx !== -1) {
-          recommendedMoves[existingIdx].type = 'both';
-        } else {
-          recommendedMoves.push({
-            ...nextMove,
-            type: 'strategy'
-          });
+    // Show the strategy line's next step while still teaching (not yet deviated)
+    if (gameMode === 'strategy' && selectedStrategy?.lines?.[0] && !deviated && !strategyTaught) {
+      const temp = new Chess(selectedStrategy.startingFen || undefined);
+      const history = game.history();
+      let match = true;
+      
+      for (let i = 0; i < history.length; i++) {
+        try {
+          temp.move(history[i]);
+        } catch (e) {
+          match = false;
+          break;
         }
-      } catch (e) {}
+      }
+
+      if (match && history.length < strategyLineMoves.length) {
+        const nextMoveSan = strategyLineMoves[history.length];
+        try {
+          const nextMove = temp.move(nextMoveSan);
+          const existingIdx = recommendedMoves.findIndex(m => m.from === nextMove.from && m.to === nextMove.to);
+          if (existingIdx !== -1) {
+            recommendedMoves[existingIdx].type = 'both';
+          } else {
+            recommendedMoves.push({
+              ...nextMove,
+              type: 'strategy'
+            });
+          }
+        } catch (e) {}
+      }
     }
   }
 
@@ -1104,6 +1192,8 @@ function App() {
               badgeBg = 'bg-emerald-600 text-white';
             }
 
+            const isSelected = selectedMovePreview?.from === move.from && selectedMovePreview?.to === move.to;
+
             return (
               <button
                 key={idx}
@@ -1111,15 +1201,27 @@ function App() {
                 onClick={() => makeMove(move)}
                 onMouseEnter={() => handleMouseEnterMove(move)}
                 onMouseLeave={handleMouseLeaveMove}
-                className="p-2 px-3 rounded-lg text-left border transition-all flex justify-between items-center bg-slate-800 border-white/5 hover:border-emerald-500/40 text-slate-100 cursor-pointer"
+                className={`p-2 px-3 rounded-lg text-left border transition-all flex justify-between items-center bg-slate-800 text-slate-100 cursor-pointer ${
+                  isSelected ? 'border-emerald-400/60 ring-1 ring-emerald-500/30' : 'border-white/5 hover:border-emerald-500/40'
+                }`}
               >
                 <div className="flex flex-col">
                   <span className="font-bold text-xs leading-normal">{friendlyText}</span>
                   <span className="text-[10px] text-slate-400 font-mono mt-0.5">{move.from} → {move.to} ({move.san})</span>
                 </div>
-                <span className={`text-[9px] px-2 py-0.5 rounded uppercase font-extrabold shrink-0 ml-2 ${badgeBg}`}>
-                  {badgeText}
-                </span>
+                <div className="flex items-center gap-1.5 ml-2 shrink-0">
+                  {/* Touch preview button */}
+                  <button
+                    onPointerDown={(e) => { e.stopPropagation(); handleTapMove(move); }}
+                    className="lg:hidden p-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-[9px] border border-white/10 cursor-pointer"
+                    title="Preview opponent reply"
+                  >
+                    {isSelected ? '✕' : '👁'}
+                  </button>
+                  <span className={`text-[9px] px-2 py-0.5 rounded uppercase font-extrabold ${badgeBg}`}>
+                    {badgeText}
+                  </span>
+                </div>
               </button>
             );
           })}
@@ -1148,6 +1250,8 @@ function App() {
               friendlyText = `Move ${pieceNames[move.piece] || 'Pawn'} to ${move.to}`;
             }
 
+            const isSelected = selectedMovePreview?.from === move.from && selectedMovePreview?.to === move.to;
+
             return (
               <button
                 key={idx}
@@ -1155,15 +1259,132 @@ function App() {
                 onClick={() => makeMove(move)}
                 onMouseEnter={() => handleMouseEnterMove(move)}
                 onMouseLeave={handleMouseLeaveMove}
-                className={`p-2 px-3 rounded text-left border transition-all flex justify-between items-center bg-slate-800 border-white/5 hover:border-slate-600 text-slate-100 ${isAnimating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                className={`p-2 px-3 rounded text-left border transition-all flex justify-between items-center bg-slate-800 text-slate-100 ${
+                  isAnimating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                } ${
+                  isSelected ? 'border-blue-400/60 ring-1 ring-blue-500/20' : 'border-white/5 hover:border-slate-600'
+                }`}
               >
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-1">
                   <span className="font-semibold text-xs leading-normal">{friendlyText}</span>
                   <span className="text-[10px] text-slate-400 font-mono mt-0.5">{move.from} → {move.to} ({move.san})</span>
                 </div>
+                {/* Touch preview button (visible on tablet/mobile, hidden on desktop hover) */}
+                <button
+                  onPointerDown={(e) => { e.stopPropagation(); handleTapMove(move); }}
+                  className="lg:hidden p-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-[9px] border border-white/10 ml-2 cursor-pointer shrink-0"
+                  title="Preview opponent reply"
+                >
+                  {isSelected ? '✕' : '👁'}
+                </button>
               </button>
             );
           })}
+        </div>
+      </div>
+    );
+  };
+
+  // Render the full strategy line as a step-by-step tree with Your move / Opponent can play nodes
+  const renderStrategyTree = () => {
+    if (gameMode !== 'strategy' || !selectedStrategy?.lines?.[0]?.moves) return null;
+    const lineMoves = selectedStrategy.lines[0].moves;
+    const history = game.history();
+    const currentStep = history.length;
+
+    // Build paired steps: [{ yourMove, opponentMoves }]
+    const steps = [];
+    const tempGame = new Chess(selectedStrategy.startingFen || undefined);
+    const isUserWhite = userColor === 'w';
+
+    for (let i = 0; i < lineMoves.length; i++) {
+      const move = lineMoves[i];
+      // Even indices are White moves, odd are Black moves
+      const isWhiteMove = i % 2 === 0;
+      const isUserMove = (isWhiteMove && isUserWhite) || (!isWhiteMove && !isUserWhite);
+      const isDone = i < currentStep;
+      const isCurrent = i === currentStep;
+
+      let sanMove = null;
+      try {
+        const result = tempGame.move(move);
+        sanMove = result.san;
+      } catch (e) {
+        break;
+      }
+
+      steps.push({ idx: i, san: sanMove || move, isUserMove, isDone, isCurrent });
+    }
+
+    return (
+      <div className="mb-6 animate-fade-in">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+            <span>📋</span> Strategy Roadmap
+          </h3>
+          <span className="text-[9px] text-slate-500 font-mono">{Math.min(currentStep, lineMoves.length)}/{lineMoves.length} steps</span>
+        </div>
+        <div className="relative flex flex-col gap-1.5 pl-3 border-l-2 border-slate-700/60">
+          {steps.map((step) => (
+            <div
+              key={step.idx}
+              className={`relative flex items-start gap-2.5 p-2 rounded-lg transition-all ${
+                step.isDone
+                  ? 'bg-slate-800/30 opacity-60'
+                  : step.isCurrent
+                  ? step.isUserMove
+                    ? 'bg-blue-500/10 border border-blue-500/30 shadow-sm'
+                    : 'bg-amber-500/10 border border-amber-500/30 shadow-sm'
+                  : 'bg-slate-800/10'
+              }`}
+            >
+              {/* Step dot on the timeline */}
+              <div className={`absolute -left-[1.15rem] top-3 w-3 h-3 rounded-full border-2 shrink-0 ${
+                step.isDone
+                  ? 'bg-emerald-500 border-emerald-400'
+                  : step.isCurrent
+                  ? step.isUserMove
+                    ? 'bg-blue-500 border-blue-300 animate-pulse'
+                    : 'bg-amber-500 border-amber-300 animate-pulse'
+                  : 'bg-slate-700 border-slate-600'
+              }`} />
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                    step.isUserMove
+                      ? 'bg-blue-500/20 text-blue-400'
+                      : 'bg-amber-500/20 text-amber-400'
+                  }`}>
+                    {step.isUserMove ? 'You' : 'Opponent'}
+                  </span>
+                  <span className="text-[9px] text-slate-500">Step {step.idx + 1}</span>
+                  {step.isDone && <span className="text-[9px] text-emerald-500">✓</span>}
+                  {step.isCurrent && <span className="text-[9px] text-yellow-400 animate-pulse">← Now</span>}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`font-bold font-mono text-sm ${
+                    step.isDone
+                      ? 'text-slate-500'
+                      : step.isCurrent
+                      ? step.isUserMove ? 'text-blue-300' : 'text-amber-300'
+                      : 'text-slate-400'
+                  }`}>
+                    {step.san}
+                  </span>
+                  {!step.isUserMove && !step.isDone && step.isCurrent && (
+                    <span className="text-[9px] text-slate-500 italic">(random reply)</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+          {currentStep >= lineMoves.length && (
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 mt-1">
+              <span className="text-emerald-400 text-sm">✓</span>
+              <span className="text-xs text-emerald-400 font-semibold">Strategy complete! AI engine now active.</span>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -1295,21 +1516,21 @@ function App() {
           </div>
 
           {/* Banner header */}
-          <div className="text-center mt-10 mb-12 max-w-2xl px-4 shrink-0">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-100 dark:bg-blue-900/50 mb-4 text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-widest select-none">
+          <div className="text-center mt-6 sm:mt-10 mb-6 sm:mb-12 max-w-2xl px-4 shrink-0">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-100 dark:bg-blue-900/50 mb-3 text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-widest select-none">
               👑 Play & learn chess
             </div>
             {/* Solid text color heading instead of gradient */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-100 mb-4 leading-tight font-sans select-none">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-100 mb-3 leading-tight font-sans select-none">
               Chess Trainer for Noobs
             </h1>
-            <p className="text-slate-550 dark:text-slate-400 text-sm md:text-md max-w-lg mx-auto leading-relaxed select-none">
-              The beginner-friendly chessboard coach. Learn strategies, play vs computer with real-time tactical indicators, or host a match with a friend.
+            <p className="text-slate-550 dark:text-slate-400 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed select-none">
+              Beginner-friendly chess coach. Learn strategies, play vs computer with real-time tactical indicators, or host a match with a friend.
             </p>
           </div>
 
           {/* Feature Cards Grid */}
-          <div className="w-full max-w-5xl px-4 grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 shrink-0">
+          <div className="w-full max-w-5xl px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 shrink-0">
             {/* Card 1: AI Coach */}
             <div 
               onClick={startAICoachMode}
@@ -1363,11 +1584,49 @@ function App() {
                 </div>
                 <h3 className="text-xl font-bold text-slate-100 group-hover:text-violet-400 transition-colors">Friend Duel (P2P)</h3>
                 <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
-                  Connect peer-to-peer with another player using a simple ID. Play real-time with an built-in chat board.
+                  Connect peer-to-peer with another player using a simple ID. Play real-time with a built-in chat board.
                 </p>
               </div>
               <span className="text-xs font-semibold text-violet-600 dark:text-violet-400 mt-6 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                 Join Lobby ➔
+              </span>
+            </div>
+
+            {/* Card 4: Local vs Local */}
+            <div 
+              onClick={startLocalVsLocal}
+              className="glass-panel p-6 border-l-4 border-l-orange-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
+            >
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center text-xl mb-4 font-bold">
+                  🏠
+                </div>
+                <h3 className="text-xl font-bold text-slate-100 group-hover:text-orange-400 transition-colors">Local vs Local</h3>
+                <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
+                  Two players take turns on the same device. No AI recommendations or tutor hints — pure chess.
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-orange-500 dark:text-orange-400 mt-6 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Play Now ➔
+              </span>
+            </div>
+
+            {/* Card 5: Simulation */}
+            <div 
+              onClick={startSimulation}
+              className="glass-panel p-6 border-l-4 border-l-pink-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
+            >
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-500 flex items-center justify-center text-xl mb-4 font-bold">
+                  🎭
+                </div>
+                <h3 className="text-xl font-bold text-slate-100 group-hover:text-pink-400 transition-colors">Simulation</h3>
+                <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
+                  Choose your side (White or Black), then play a local match against yourself. No recommendations — pure simulation.
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-pink-500 dark:text-pink-400 mt-6 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Choose Side ➔
               </span>
             </div>
           </div>
@@ -1444,40 +1703,40 @@ function App() {
 
           {/* Strategy Directory Panel */}
           {gameMode === 'strategy' && (
-            <div className="glass-panel w-full max-w-4xl p-6 flex flex-col max-h-[80vh] mx-auto shadow-2xl">
+            <div className="glass-panel w-full max-w-4xl p-4 sm:p-6 flex flex-col max-h-[80vh] mx-auto shadow-2xl">
               {/* Search Box */}
               <input
                 type="text"
-                placeholder="Search openings, midgames, or endgames (e.g. Sicilian, Fork, Opposition)..."
-                className="w-full p-3.5 rounded-xl bg-slate-800/80 border border-white/5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all text-sm mb-4 shrink-0"
+                placeholder="Search openings, midgames, endgames..."
+                className="w-full p-3 rounded-xl bg-slate-800/80 border border-white/5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all text-sm mb-3 shrink-0"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
 
               {/* Filters Row */}
-              <div className="flex flex-col md:flex-row gap-3 mb-4 shrink-0">
-                <div className="flex-1 flex gap-1 bg-slate-950/40 p-1.5 rounded-xl border border-white/5">
+              <div className="flex flex-col gap-2 mb-3 shrink-0">
+                <div className="flex gap-1 bg-slate-950/40 p-1 rounded-xl border border-white/5">
                   {['all', 'openings', 'midgames', 'endgames'].map(cat => (
                     <button
                       key={cat}
                       onClick={() => setCategoryFilter(cat)}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                         categoryFilter === cat
                           ? 'bg-blue-600 text-slate-100 font-bold'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      {cat === 'all' ? 'All' : cat === 'midgames' ? 'Midgame' : cat === 'endgames' ? 'Endgame' : 'Openings'}
+                      {cat === 'all' ? 'All' : cat === 'midgames' ? 'Mid' : cat === 'endgames' ? 'End' : 'Open'}
                     </button>
                   ))}
                 </div>
 
-                <div className="flex gap-1 bg-slate-955/40 p-1.5 rounded-xl border border-white/5 md:w-72">
+                <div className="flex gap-1 bg-slate-955/40 p-1 rounded-xl border border-white/5">
                   {['all', 'white', 'black'].map(side => (
                     <button
                       key={side}
                       onClick={() => setSideFilter(side)}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                         sideFilter === side
                           ? 'bg-emerald-600 text-slate-100 font-bold'
                           : 'text-slate-400 hover:text-slate-200'
@@ -1490,7 +1749,7 @@ function App() {
               </div>
 
               {/* Strategies Grid List */}
-              <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pr-1 scrollbar-thin">
+              <div className="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-3 pr-1 scrollbar-thin">
                 {filteredStrategies.map(item => {
                   const tempCctp = calculateCCTP(item.startingFen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
                   const checkCount = tempCctp.checks.length;
@@ -1864,10 +2123,10 @@ function App() {
   if (view === 'multiplayer-lobby') {
     return (
       <div className={darkMode ? 'dark' : ''}>
-        <div className="flex items-center justify-center min-h-screen bg-chess-pattern p-6 bg-slate-955 text-slate-100 relative animate-fade-in">
+        <div className="flex items-center justify-center min-h-screen bg-chess-pattern p-4 sm:p-6 bg-slate-955 text-slate-100 relative animate-fade-in overflow-y-auto">
           
           {/* Theme Toggle */}
-          <div className="absolute top-6 right-6">
+          <div className="absolute top-4 right-4 z-10">
             <button 
               onClick={() => {
                 const val = !darkMode;
@@ -1880,7 +2139,7 @@ function App() {
             </button>
           </div>
 
-          <div className="glass-panel max-w-md w-full p-8 shadow-2xl flex flex-col items-center font-sans">
+          <div className="glass-panel max-w-sm sm:max-w-md w-full p-6 sm:p-8 shadow-2xl flex flex-col items-center font-sans my-6">
             <div className="w-12 h-12 rounded-2xl bg-violet-555/10 dark:bg-violet-500/10 text-violet-650 dark:text-violet-400 flex items-center justify-center text-3xl mb-4 font-bold animate-pulse">
               👥
             </div>
@@ -1894,27 +2153,64 @@ function App() {
 
             {/* Connection Status Indicator */}
             <div className="w-full flex flex-col items-center p-4 bg-slate-905/60 border border-white/5 rounded-2xl mb-6">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-1">Your Connection Key</span>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">Your Connection Key</span>
               {connectionStatus === 'connecting' ? (
                 <div className="flex items-center gap-2 text-xs text-violet-500 animate-pulse">
                   <span className="animate-spin">🌀</span> Generating peer key...
                 </div>
               ) : (
-                <div className="flex flex-col items-center w-full">
-                  <code className="text-lg font-black font-mono text-slate-200 select-all tracking-wider px-3 py-1 bg-slate-950/80 rounded border border-white/5 mb-3">
+                <div className="flex flex-col items-center w-full gap-3">
+                  {/* Peer ID text */}
+                  <code className="text-lg font-black font-mono text-slate-200 select-all tracking-wider px-3 py-1 bg-slate-950/80 rounded border border-white/5">
                     {peerId || "---"}
                   </code>
-                  {peerId && (
-                    <button 
-                      onClick={() => {
-                        navigator.clipboard.writeText(peerId);
-                        alert("Peer ID copied to clipboard!");
-                      }}
-                      className="px-3 py-1 rounded bg-violet-600 hover:bg-violet-750 text-slate-100 text-[10px] font-bold uppercase transition-all shadow-md active:scale-95 cursor-pointer"
-                    >
-                      Copy Peer ID
-                    </button>
-                  )}
+
+                  {/* QR Code - encodes a direct URL to the site with the peer ID pre-filled */}
+                  {peerId && (() => {
+                    const connectUrl = `${window.location.origin}${window.location.pathname}?peer=${peerId}`;
+                    return (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="p-2 sm:p-3 bg-white rounded-xl shadow-md">
+                          <QRCodeSVG
+                            value={connectUrl}
+                            size={130}
+                            bgColor="#ffffff"
+                            fgColor="#1e293b"
+                            level="M"
+                            includeMargin={false}
+                          />
+                        </div>
+                        <p className="text-[10px] text-slate-500 text-center max-w-[200px] leading-relaxed">
+                          Friend scans QR → opens site → auto-connects
+                        </p>
+
+                        {/* Copy invite link button */}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(peerId);
+                              setCopyToast(true);
+                              setTimeout(() => setCopyToast(false), 2000);
+                            }}
+                            className="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-[10px] font-bold uppercase transition-all shadow-md active:scale-95 cursor-pointer border border-white/10"
+                          >
+                            {copyToast ? '✓ Copied!' : 'Copy ID'}
+                          </button>
+                          <button
+                            onClick={() => {
+                              const link = `${window.location.origin}${window.location.pathname}?peer=${peerId}`;
+                              navigator.clipboard.writeText(link);
+                              setCopyToast(true);
+                              setTimeout(() => setCopyToast(false), 2000);
+                            }}
+                            className="px-3 py-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-slate-100 text-[10px] font-bold uppercase transition-all shadow-md active:scale-95 cursor-pointer"
+                          >
+                            {copyToast ? '✓ Copied!' : 'Copy Link'}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>
@@ -1972,15 +2268,18 @@ function App() {
       ) : (
         <div className="flex-1 flex flex-col min-h-0">
           {gameMode === 'strategy' && deviated && (
-            <div className="p-3 mb-6 bg-red-955/40 border border-red-500/30 rounded-xl text-xs text-red-355 dark:text-red-300 animate-pulse">
+            <div className="p-3 mb-4 bg-red-955/40 border border-red-500/30 rounded-xl text-xs text-red-355 dark:text-red-300 animate-pulse">
               <strong className="block text-red-400 font-bold mb-1">⚠️ STRATEGY DEVIATION</strong>
               {deviationMsg}
             </div>
           )}
 
-          <p className="text-xs text-slate-450 dark:text-slate-400 mb-6 select-none leading-relaxed">
+          {/* Strategy Roadmap Tree - shown above move options when in strategy mode */}
+          {gameMode === 'strategy' && !deviated && renderStrategyTree()}
+
+          <p className="text-xs text-slate-450 dark:text-slate-400 mb-4 select-none leading-relaxed">
             {game.turn() === userColor 
-              ? "Click on your piece to see move choices, then select the destination." 
+              ? "Click your piece then destination. Tap 👁 on a move to preview opponent replies (touch)." 
               : "Waiting for opponent's reply..."}
           </p>
           
@@ -1990,11 +2289,15 @@ function App() {
                 {/* 1. Recommended Moves (Always shown in top only) */}
                 {renderRecommendedSection()}
 
-                {/* 2. Standard Move categories (excluding recommendations) */}
-                {renderMoveList("Checks (C)", filteredChecks, "text-red-400")}
-                {renderMoveList("Captures (C)", filteredCaptures, "text-amber-405 dark:text-amber-400")}
-                {renderMoveList("Threats (T)", filteredThreats, "text-purple-400")}
-                {renderMoveList("Plans / Center (P)", filteredPlans, "text-blue-400")}
+                {/* 2. Standard Move categories (excluding recommendations) — hidden during strategy teaching phase */}
+                {(gameMode !== 'strategy' || strategyTaught || deviated) && (
+                  <>
+                    {renderMoveList("Checks (C)", filteredChecks, "text-red-400")}
+                    {renderMoveList("Captures (C)", filteredCaptures, "text-amber-405 dark:text-amber-400")}
+                    {renderMoveList("Threats (T)", filteredThreats, "text-purple-400")}
+                    {renderMoveList("Plans / Center (P)", filteredPlans, "text-blue-400")}
+                  </>
+                )}
               </>
             ) : (
               <div className="p-4 bg-slate-800/50 rounded-xl border border-white/5 text-center text-slate-400 italic text-sm select-none">
@@ -2050,7 +2353,8 @@ function App() {
                 </div>
                 <p className="text-sm text-slate-400 font-bold">Blunder Check</p>
                 <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                  Hover over a move in the left column or a highlighted possible square on the board to preview the opponent's checks, captures, threats, and plans before you commit!
+                  <span className="hidden lg:inline">Hover over a move in the left column to preview opponent replies.</span>
+                  <span className="lg:hidden">Tap the <strong>👁</strong> button on any move in the left column to preview opponent replies before committing.</span>
                 </p>
               </div>
             )}
@@ -2060,39 +2364,81 @@ function App() {
     </div>
   );
 
+  // Simulation color select view
+  if (view === 'simulation-color-select') {
+    return (
+      <div className={darkMode ? 'dark' : ''}>
+        <div className="flex items-center justify-center min-h-screen bg-chess-pattern p-6 bg-slate-955 text-slate-100 relative animate-fade-in">
+          <div className="glass-panel text-center max-w-lg w-full p-8 shadow-2xl">
+            <div className="w-14 h-14 rounded-2xl bg-pink-500/10 text-pink-500 flex items-center justify-center text-3xl mb-4 mx-auto">🎭</div>
+            <h2 className="text-3xl font-bold mb-2 text-slate-100">Simulation</h2>
+            <p className="text-slate-400 mb-8 text-sm">Choose which side you will start as. Both sides will be playable locally with no AI assistance.</p>
+            <div className="flex gap-4 justify-center">
+              <button
+                className="w-36 py-3 rounded-lg font-semibold bg-slate-100 text-slate-900 hover:bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+                onClick={() => {
+                  setUserColor('w');
+                  game.reset();
+                  forceUpdate();
+                  setLastMove(null);
+                  setView('trainer');
+                }}
+              >
+                ⚪ White
+              </button>
+              <button
+                className="w-36 py-3 rounded-lg font-semibold bg-slate-800 text-slate-100 border border-white/20 hover:bg-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+                onClick={() => {
+                  setUserColor('b');
+                  game.reset();
+                  forceUpdate();
+                  setLastMove(null);
+                  setView('trainer');
+                }}
+              >
+                ⚫ Black
+              </button>
+            </div>
+            <button className="btn-primary mt-8 cursor-pointer" onClick={() => setView('home')}>Back</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={darkMode ? 'dark' : ''}>
       <div className="flex flex-col h-screen w-full bg-slate-950 text-slate-100 overflow-hidden relative font-sans animate-fade-in">
         
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-sm-between px-6 py-4 border-b border-white/10 bg-slate-900/60 backdrop-blur-md shrink-0 gap-3">
-          <div className="flex items-center gap-3">
+        {/* Header - compact on mobile */}
+        <div className="flex items-center px-3 sm:px-6 py-2.5 sm:py-4 border-b border-white/10 bg-slate-900/60 backdrop-blur-md shrink-0 gap-2 sm:gap-3 min-h-0">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             {/* Solid text color heading instead of gradient */}
-            <h1 className="text-xl md:text-2xl font-bold text-slate-100 leading-none">
-              {selectedStrategy ? selectedStrategy.name : "Chess Trainer for Noobs"}
+            <h1 className="text-sm sm:text-base md:text-xl font-bold text-slate-100 leading-none truncate">
+              {selectedStrategy ? selectedStrategy.name : "Chess Trainer"}
             </h1>
-            <span className="px-2 py-0.5 rounded bg-slate-800 border border-white/10 text-[10px] md:text-xs font-semibold text-slate-300 shrink-0">
-              Playing as: {userColor === 'w' ? 'White ⚪' : 'Black ⚫'}
+            <span className="hidden sm:inline px-1.5 py-0.5 rounded bg-slate-800 border border-white/10 text-[9px] font-semibold text-slate-300 shrink-0">
+              {userColor === 'w' ? 'White ⚪' : 'Black ⚫'}
             </span>
             {gameMode === 'multiplayer' && (
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-violet-500/20 text-violet-450 border border-violet-500/20 text-[9px] font-semibold uppercase animate-pulse">
+              <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-450 border border-violet-500/20 text-[9px] font-semibold uppercase animate-pulse">
                 <span className="h-1.5 w-1.5 rounded-full bg-violet-400"></span> Duel
               </span>
             )}
           </div>
 
-          {/* Head controls */}
-          <div className="flex items-center gap-4 ml-auto sm:ml-0">
+          {/* Head controls - right side compact row */}
+          <div className="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0">
             {gameMode === 'multiplayer' ? (
               <button 
                 onClick={requestRestartMultiplayer}
-                className="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 border border-white/10 text-[10px] md:text-xs text-slate-300 font-bold transition-all active:scale-95 cursor-pointer"
+                className="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 border border-white/10 text-[9px] sm:text-[10px] text-slate-300 font-bold transition-all active:scale-95 cursor-pointer"
               >
-                Restart Game
+                Restart
               </button>
             ) : (
               <label 
-                className="flex items-center gap-1.5 cursor-pointer text-[10px] md:text-xs font-semibold text-slate-300 bg-slate-800 px-2.5 py-1.5 rounded-lg border border-white/10 hover:bg-slate-700 transition-all select-none relative group"
+                className="flex items-center gap-1 cursor-pointer text-[9px] sm:text-[10px] font-semibold text-slate-300 bg-slate-800 px-2 py-1.5 rounded-lg border border-white/10 hover:bg-slate-700 transition-all select-none relative group"
                 title="Toggles tutor popups at the start of your turn"
               >
                 <span>Tutor:</span>
@@ -2104,14 +2450,14 @@ function App() {
                     setQuizEnabled(val);
                     localStorage.setItem('chesstrainer_tutor_enabled', String(val));
                   }} 
-                  className="accent-blue-500 cursor-pointer w-3.5 h-3.5"
+                  className="accent-blue-500 cursor-pointer w-3 h-3"
                 />
                 <span className={quizEnabled ? "text-emerald-400 font-bold" : "text-slate-505"}>
                   {quizEnabled ? "ON" : "OFF"}
                 </span>
 
                 {/* Subtle visual helper tip to turn off tutor */}
-                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 rounded bg-slate-900 border border-white/10 text-[9px] font-medium leading-normal text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl text-center">
+                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 rounded bg-slate-900 border border-white/10 text-[9px] font-medium leading-normal text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl text-center z-50">
                   💡 Turn Tutor OFF if you want to play without question dialogs.
                 </span>
               </label>
@@ -2131,7 +2477,7 @@ function App() {
             </button>
 
             <button 
-              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all font-medium text-[10px] md:text-xs text-slate-300 hover:text-slate-100 cursor-pointer"
+              className="px-2 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all font-bold text-[9px] sm:text-[10px] text-slate-300 hover:text-slate-100 cursor-pointer"
               onClick={() => {
                 if (conn) conn.close();
                 setView('home');
@@ -2142,21 +2488,21 @@ function App() {
           </div>
         </div>
 
-        {/* 3-Pane Layout with full Laptop, iPad and Mobile responsiveness */}
+        {/* 3-Pane Layout: mobile = board on top + tab panels below; desktop = 3 side-by-side columns */}
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
           
           {/* Left Column (Your Options): Sidebar on LG screen, Tab Panel on Tablet/Mobile */}
-          <div className={`border-r border-white/10 bg-slate-900/40 p-6 flex flex-col overflow-y-auto lg:w-[320px] xl:w-[380px] shrink-0 ${
-            mobileTab === 'mine' ? 'flex h-[45vh] lg:h-auto lg:flex-1' : 'hidden lg:flex'
+          <div className={`border-r border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto lg:w-[300px] xl:w-[360px] shrink-0 ${
+            mobileTab === 'mine' ? 'flex h-[42vh] lg:h-auto lg:flex-1' : 'hidden lg:flex'
           }`}>
             {leftPanelContent}
           </div>
 
-          {/* Middle Column (Chessboard): Top of viewport on mobile, Center on desktop */}
-          <div className="flex-1 bg-slate-955 flex flex-col items-center justify-center p-4 md:p-6 relative shrink-0 lg:shrink">
+          {/* Middle Column (Chessboard): Fills top of screen on mobile, center on desktop */}
+          <div className="flex-1 bg-slate-955 flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 relative shrink-0 lg:shrink">
             
-            {/* Chessboard framed wrapper */}
-            <div className="w-full max-w-[85vw] md:max-w-[70vh] aspect-square rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.15)] border border-slate-700/50 p-2 bg-slate-900/60 backdrop-blur-md relative">
+            {/* Chessboard framed wrapper - tighter on mobile */}
+            <div className="w-full max-w-[min(85vw,calc(100vh-200px))] sm:max-w-[min(85vw,65vh)] aspect-square rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.2)] border border-slate-700/50 p-1.5 sm:p-2 bg-slate-900/60 backdrop-blur-md relative">
               <CustomChessboard 
                 position={game.fen()} 
                 onSquareClick={onSquareClick}
@@ -2169,54 +2515,54 @@ function App() {
               />
             </div>
 
-            {/* In-game Legend indicator Row (Desktop only or below board) - Hidden in multiplayer mode */}
+            {/* In-game Legend indicator Row - Hidden in multiplayer mode, compact on mobile */}
             {gameMode !== 'multiplayer' && (
-              <div className="mt-4 flex flex-wrap gap-4 justify-center text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+              <div className="mt-2 sm:mt-4 flex flex-wrap gap-2 sm:gap-4 justify-center text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-500"></span>
                   <span>Best</span>
                 </div>
                 {gameMode === 'strategy' && (
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-blue-500"></span>
                     <span>Strategy</span>
                   </div>
                 )}
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
+                  <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-yellow-500"></span>
                   <span>Hover / Target</span>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Mobile switcher tab bar (placed right below the chessboard on Tablet/Mobile) */}
+          {/* Mobile switcher tab bar */}
           <div className="flex border-y border-white/10 lg:hidden shrink-0 bg-slate-900 select-none">
             <button 
               onClick={() => setMobileTab('mine')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1 cursor-pointer ${
                 mobileTab === 'mine' 
                   ? 'text-blue-500 border-b-2 border-blue-500 bg-slate-800' 
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              👤 {gameMode === 'multiplayer' ? "Moves" : "Your Options"}
+              👤 {gameMode === 'multiplayer' ? "Moves" : "Options"}
             </button>
             <button 
               onClick={() => setMobileTab('opp')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1 cursor-pointer ${
                 mobileTab === 'opp' 
                   ? 'text-rose-500 border-b-2 border-rose-500 bg-slate-800' 
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🤖 {gameMode === 'multiplayer' ? "Chat" : "Opponent Replies"}
+              🤖 {gameMode === 'multiplayer' ? "Chat" : "Replies"}
             </button>
           </div>
 
           {/* Right Column (Opponent Options): Sidebar on LG screen, Tab Panel on Tablet/Mobile */}
-          <div className={`border-l border-white/10 bg-slate-900/40 p-6 flex flex-col overflow-y-auto lg:w-[320px] xl:w-[380px] shrink-0 ${
-            mobileTab === 'opp' ? 'flex h-[45vh] lg:h-auto lg:flex-1' : 'hidden lg:flex'
+          <div className={`border-l border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto lg:w-[300px] xl:w-[360px] shrink-0 ${
+            mobileTab === 'opp' ? 'flex h-[42vh] lg:h-auto lg:flex-1' : 'hidden lg:flex'
           }`}>
             {rightPanelContent}
           </div>
@@ -2333,6 +2679,52 @@ function App() {
                 💡 Tip: You can disable this tutor anytime using the "Tutor" toggle in the top header.
               </p>
 
+            </div>
+          </div>
+        )}
+
+        {/* 🎉 Confetti / Party Popper Celebration Overlay on Checkmate */}
+        {showConfetti && (
+          <div className="fixed inset-0 z-[100] pointer-events-none overflow-hidden" aria-hidden="true">
+            {/* Animated confetti particles */}
+            {Array.from({ length: 60 }).map((_, i) => {
+              const colors = ['#f59e0b','#10b981','#3b82f6','#ec4899','#8b5cf6','#ef4444','#06b6d4','#84cc16'];
+              const color = colors[i % colors.length];
+              const left = `${(i * 1.667).toFixed(1)}%`;
+              const delay = `${(i * 0.06).toFixed(2)}s`;
+              const dur = `${(1.4 + (i % 5) * 0.25).toFixed(2)}s`;
+              const size = `${8 + (i % 6) * 3}px`;
+              const isCircle = i % 3 === 0;
+              return (
+                <div
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    top: '-20px',
+                    left,
+                    width: size,
+                    height: isCircle ? size : `${4 + (i % 4) * 2}px`,
+                    borderRadius: isCircle ? '50%' : '2px',
+                    background: color,
+                    animation: `confettiFall ${dur} ${delay} ease-in forwards`,
+                    transform: `rotate(${i * 37}deg)`,
+                  }}
+                />
+              );
+            })}
+
+            {/* Winner banner */}
+            <div className="absolute inset-0 flex items-center justify-center px-4">
+              <div className="bg-slate-950/90 border border-yellow-400/40 rounded-3xl px-6 sm:px-10 py-6 sm:py-8 text-center shadow-2xl backdrop-blur-md animate-bounce-in max-w-xs w-full">
+                <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">🎉</div>
+                <h2 className="text-2xl sm:text-3xl font-black text-yellow-400 mb-2">Checkmate!</h2>
+                <p className="text-slate-300 text-sm">
+                  {game.turn() === 'w'
+                    ? '🏆 Black wins the game!'
+                    : '🏆 White wins the game!'}
+                </p>
+                <p className="text-slate-400 text-xs mt-2 animate-pulse">🎊 Congratulations! 🎊</p>
+              </div>
             </div>
           </div>
         )}
