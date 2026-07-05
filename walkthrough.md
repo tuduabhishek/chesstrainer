@@ -1,0 +1,145 @@
+# Chess Trainer Walkthrough
+
+I have integrated the training methodology, Stockfish CDN worker, interactive hover-triggered arrows on the board, a comprehensive database of openings, midgame themes, and endgame configurations, along with a consolidated dashboard homepage, side-filtering, search capabilities, opponent strategy selection for Black training, recommended defenses select step, real-time deviation alerts, a custom lightweight React 19 Chessboard component, smooth piece slide transitions, beginner-friendly move notation translations, directional path rendering, interactive board-hover blunder checks, a floating Chatbot Tutor, Web Speech API synthesis, light color scheme by default, a persistent dark mode toggle, responsive multi-device compatibility, profile avatars directly inside options headers, complete gradient removal, homepage dashboard preview counts, competitive P2P multiplayer, redesigned CCTP priority quiz chatbot questions, contrast styling, custom local storage bindings, metrics tracking dashboard, dynamic color-coded chessboard highlights, production build preparations for GitHub Pages, and quiet alert-free metrics reset controls.
+
+## Changes Made
+- **Quiet Alert-Free Metrics Reset:**
+  - Removed native browser `window.confirm` and `alert` popups from the "Reset All Data" operation.
+  - Clicking the reset button now wipes the metrics, settings, and theme styles instantly, and renders an elegant, inline green success message (`✓ Reset successful!`) that pulses and automatically fades out after 2 seconds.
+- **GitHub Pages Subfolder Base Path:**
+  - Added `base: '/chesstrainer/'` inside `vite.config.js` to configure build asset resolutions for GitHub Pages hosting compatibility under the `/chesstrainer/` repository scope.
+- **Aggressive Code Minification & Mangle:**
+  - Configured Vite's native production compiler build settings with `minify: true` and `sourcemap: false`.
+  - Disabling source maps completely ensures that the original JSX code and files cannot be inspected or reconstructed in the browser's developer console.
+  - The compiler aggressively mangles variables and class identifiers, squishing the compiled code into a single, optimized, unreadable line of script to protect logical integrity.
+- **Renamed Quiz to Tutor:**
+  - Renamed all "Quiz" references in UI labels, check tags, and header items to **"Tutor"** (e.g. Header toggle: `Tutor: ON/OFF`).
+- **Hint to Turn Off Tutor:**
+  - Added a helpful tooltip hint on the header Tutor checkbox (`💡 Turn Tutor OFF if you want to play without question dialogs.`).
+  - Added a footer tip directly inside the floating Tutor chatbot widget (`💡 Tip: You can disable this tutor anytime using the "Tutor" toggle in the top header.`), making it easy for beginners to adjust their training experience.
+- **Persistent Local Storage Settings:**
+  - **Tutor Preference:** Saves the Tutor ON/OFF toggle state to `localStorage` under `chesstrainer_tutor_enabled`.
+  - **Dark Mode Preference:** Saves the dark mode state to `localStorage` under `chesstrainer_dark_mode`.
+  - Loads all settings automatically on initial boot.
+- **Training Metrics Dashboard (Personalization):**
+  - Integrated a training stats panel on the homepage:
+    - **Games Started:** Tracks total opening/coach practice runs initiated.
+    - **Moves Trained:** Tracks the number of legal chess moves played.
+    - **Tutor Correct / Accuracy:** Tracks how many Tutor priorities were answered correctly and calculates overall percentage accuracy.
+  - **Recently Learned List:** Lists recently trained opening strategies and counts how many times they've been practiced.
+  - **Reset All Data Button:** Added a "Reset All Data 🗑️" button with confirmation alert that wipes all localStorage keys and restores the application to default settings.
+- **Board-Level Color-Coded CCTP Highlights:**
+  - Hovering over a move in the left sidebar dynamically highlights tactical implications directly on the chessboard:
+    - **Checks:** Highlights the attacked King's square in solid Red.
+    - **Captures:** Highlights the captured target piece's square in solid Amber.
+    - **Threats:** Highlights the threatened piece's square in solid Purple.
+  - Hovering over opponent replies in the right sidebar highlights their response opportunities:
+    - **Opponent Check replies:** Draws a dashed Red ring on the targeted square.
+    - **Opponent Capture replies:** Draws a dashed Amber ring on the targeted square.
+    - **Opponent Threat replies:** Draws a dashed Purple ring on the targeted square.
+  - This offers real-time, color-coded visual mapping of CCTP tactics on the actual board squares.
+- **Enhanced Chatbot Readability & Contrast:**
+  - Redesigned the Chess Tutor message bubbles to use clean high-contrast colors in both Light and Dark modes:
+    - **Tutor Bubble:** uses light slate and dark text (`text-slate-100 bg-slate-900` dark: `bg-slate-955`) in light mode to provide a highly visible container; dark slate and bright text in dark mode.
+    - **Header Text:** Replaced white text (`text-white`) with theme-adaptive text (`text-slate-100`) to prevent white-on-light-gray rendering in light theme.
+    - **Online status:** Changed neon green `text-emerald-400` to high-contrast dark green `text-emerald-705` in light theme.
+    - **Options Buttons:** Restructured to use standard contrast classes (`text-slate-200 dark:text-slate-305`) preventing faint gray on light gray backgrounds.
+- **Overhauled CCTP Search Priority Quiz:**
+  - **Pedagogical Shift:** The quiz no longer asks the user to classify the move they *already* made. Instead, it tests their strategic vision at the start of their turn by asking: *"According to CCTP priorities, which category of move should you search for first in this position?"*
+  - **Dynamic Priority Verification:** The app checks the available legal moves in the current position:
+    - Correct answer is **Checks** if any available legal checks exist.
+    - Correct answer is **Captures** if no checks, but legal captures exist.
+    - Correct answer is **Threats** if no checks or captures, but legal threats exist.
+    - Correct answer is **Plans / Center** if no checks, captures, or threats exist.
+  - **Start-of-Turn Trigger:** The quiz automatically pops up at the start of the player's turn (after the opponent finishes moving) when the Training Quiz toggle is active.
+  - **Auto-Dismiss:** Clears the quiz immediately when the user executes a move on the board, ensuring a fluid game loop.
+- **Dashboard Preview Badge Counts for CCTP:**
+  - Added live preview tags to all strategy selector cards on the homepage dashboard.
+  - When loading the dashboard, the app dynamically calculates the number of Checks, Captures, and Threats present in each card's starting FEN.
+  - Displays them as clean, solid badges (e.g. `💥 2 Checks`, `⚔️ 3 Captures`, `🎯 1 Threat`) directly on the card below the description, providing immediate tactical preview context.
+- **Embedded P2P Match Interface (No Helpers):**
+  - **No Trainer Helpers:** In Friend Duel (P2P multiplayer) mode, all chess assistance features are completely disabled. No Stockfish best move arrows, no strategy line arrows, and no hover previews are rendered.
+  - **Move History Log:** The Left Sidebar completely hides options lists (Checks, Captures, Threats, Plans) and instead displays a clean, scrollable **Move History** log (e.g., `1. e4 e5`, `2. Nf3 Nc6`) detailing the sequence of moves played.
+  - **Integrated Duel Chat:** Embedded the multiplayer connection details and P2P Duel Chat directly inside the Right Sidebar, completely replacing the blunder check options list. This eliminates the floating chat widget, creating a unified workspace.
+  - **Clean UI Elements:** Removed the Coach Advice toggles from the header and hidden the board highlight legend circles in multiplayer mode.
+- **Unified Sidebar Profile Headers:**
+  - Removed duplicate option headers ("Your Options" with crown icon, "Opponent Options" with Opp icon) inside sidebars.
+  - The **Player profile card** (avatar, name, live status, color) now acts as the single primary header for the Left Sidebar.
+  - The **Opponent profile card** (avatar, name, live status, color) now acts as the single primary header for the Right Sidebar.
+- **Responsive Multi-Device Support (Mobile, iPad, Laptop):**
+  - **Laptops/Desktops:** Renders as a beautiful, high-productivity 3-column layout: Left Options (Player) ➔ Middle Chessboard ➔ Right Options (Opponent Blunder Check).
+  - **Tablets/Mobile Phones (e.g. iPads):** Renders the chessboard as a prominent, centered item at the top. Underneath it, a clean, interactive tab-bar switcher is rendered to switch between **👤 Your Options** and **🤖 Opponent Replies**. This prevents cramped columns and ensures maximum usability.
+- **Complete Gradient and Pulse Shadow Removal:**
+  - Removed all `radial-gradient` backgrounds from `index.css` and replaced them with crisp, clean, flat background colors.
+  - Removed all `bg-gradient-to-r` and `bg-gradient-to-br` classes from components, tags, buttons, and headers, replacing them with solid, readable colors.
+  - Removed text gradients from all pages, ensuring high contrast and legibility.
+- **Native HTML/CSS Option Highlights:**
+  - Replaced radial gradient inline styles for chessboard target square coordinates with native HTML/CSS overlays inside the grid cell button.
+  - Empty target moves are marked with a soft, clean blue circle, and capture moves receive an elegant solid red border and overlay.
+- **Light Color Scheme by Default:**
+  - Redesigned the stylesheet using Tailwind 4 theme variables to support a cool, high-readability light color scheme by default.
+  - The background is a clean solid slate-50 background, card panels are bright semi-transparent white containers with dark text overlays, and interactive borders are soft gray.
+- **Dark Mode Toggle (☀️ / 🌙):**
+  - Added a persistent sun/moon toggle button to the top-right of the homepage, color selectors, lobbies, and the in-game header.
+  - Toggling it switches the app root between default and `.dark` state.
+  - In dark mode, all slate values and text scales invert dynamically using CSS custom properties to maintain the premium dark-slate aesthetic.
+- **Adaptive Chessboard Styling:**
+  - In light mode, the custom chessboard squares render with a gorgeous vinyl classic wood finish (brown-beige `#b58863` and `#f0d9b5`).
+  - In dark mode, the squares swap dynamically to a sleek futuristic slate-blue appearance (`#cbd5e1` and `#475569`) to match the surrounding theme.
+- **Bypassed Side Selection Screen for Openings:**
+  - Openings in the database are already color-specific (e.g. *Ruy Lopez* is White, *Sicilian Defense* is Black). Therefore, prompting the user with a "Choose Your Side (White or Black)" screen is redundant.
+  - **White Openings:** Clicking a White opening card on the homepage starts the game as White immediately in the trainer view.
+  - **Black Openings:** Clicking a Black opening card on the homepage sets the user's color to Black and routes them **directly** to the **"Choose White's Strategy"** screen (bypassing side selection).
+  - **Other Themes (Midgames/Endgames):** Since midgames and endgames don't have predefined colors, clicking them still opens the "Choose Your Side" screen so you can choose which side to practice.
+- **Intelligent Opponent Matching:**
+  - When playing as Black, the opponent strategy select screen displays **Recommended Openings for White** (the lines compatible with your Sicilian Defense, like *Alapin Variation* or *Closed Sicilian*) and **Other Openings** to face.
+  - Selecting White's strategy launches the game immediately. White plays its first move, and you defend using your selected Black defense.
+- **Real-time Deviation Alerts:**
+  - The app tracks whether the game state aligns with the selected strategy.
+  - If you play a move that deviates from the strategy's prescribed path (e.g. playing `d6` instead of `Nc6` in the Ruy Lopez), a warning banner appears: `"⚠️ STRATEGY DEVIATION: You played d6 instead of Nc6. Live engine analysis is now active."`
+  - In addition, once deviated, the opponent automatically switches from strategy moves to Stockfish's optimal moves, and we inform you why we are leaving the strategy.
+- **Beginner-Friendly Move Translation:**
+  - Standard algebraic notation is translated to natural English sentences in the move lists (for both "Your Options" and "Opponent Options").
+  - For example, `Nf3` is displayed as `Move Knight to f3`, `exd5` as `Capture Pawn on d5`, and `O-O` as `Castle Kingside`.
+  - Underneath the friendly text, the starting/destination squares and the exact algebraic notation are displayed (e.g. `g1 → f3 (Nf3)`) to help beginners learn the standard notation concurrently.
+- **Dedicated "Recommended Options" Section:**
+  - Extracted the recommended moves (Stockfish Best Move and Strategy Line Move) from the general Checks, Captures, Threats, and Plans category lists.
+  - Placed them inside a dedicated, highlighted **"Recommended Options"** section at the very top of the options sidebar.
+  - These recommended moves are excluded from the categories below, making them instantly accessible and reducing clutter.
+- **Removed "CCTP" Branding:**
+  - Cleaned all website headings, toggles, chatbot bubbles, category names, questions, and spoken voice outputs to completely remove the "CCTP" acronym.
+  - Renamed the quiz toggle to **"Training Quiz"**, the left pane badge to **"Tactics"**, and the chatbot to **"Chess Tutor"**.
+- **Floating Tutor Chatbot:**
+  - Removed the board-blocking full-screen quiz overlay.
+  - Replaced it with a floating **Chess Tutor chatbot widget** in the bottom-right corner of the screen (`fixed bottom-6 right-6`).
+  - The chatbot pops up after a move, displaying a tutor avatar, pulsing status ring, chat bubbles, and multiple-choice buttons.
+  - The board remains fully visible so you can study the pieces, check coordinates, and calculate responses while formatting your answer.
+  - **Exit Close Button:** Added an explicit close (`✕`) button in the chatbot header. Clicking this dismisses the tutor card immediately, closes the chat bubble, and resumes game play without forcing you to click an option.
+- **Web Speech API Audio Integration:**
+  - Integrated the browser's native **Speech Synthesis API (`window.speechSynthesis`)** to act as a verbal coach.
+  - **Muted by Default:** The audio voice feedback is disabled (`OFF`) by default to prevent unwanted noise.
+  - The tutor speaks the questions aloud (e.g. *"You played e4. How is this move classified?"*) and reads the detailed answer explanations out loud when clicked, only when unmuted.
+  - Added a styled **Mute / Unmute (🔊 / 🔇) button** directly inside the chatbot's header for instant volume control.
+- **Data Integrations:**
+  - **Openings:** Integrated 100+ standard openings (e.g., Ruy Lopez, Najdorf Sicilian, Queen's Gambit).
+  - **Midgame Themes:** Integrated 100 midgame concepts (e.g. Pin, Outpost, Symmetrical English).
+  - **Endgame Scenarios:** Integrated 39 endgame concepts with interactive FEN presets for basic mate training (e.g. King+Queen) and classic positions.
+- **State & Custom Chessboard Architecture:**
+  - **Preserved Move History:** Refactored the core board state from creating a new `Chess` object on every move (which destroyed move history) to maintaining a single persistent `Chess` instance and using a `tick` update trigger to force React re-renders. This fully preserves the game's move history array.
+  - **Custom Chessboard (`CustomChessboard`):** Replaced `react-chessboard` with a lightweight, 100% React 19 compatible board using CSS grid and public-domain high-res Wikimedia SVGs. This avoids all mouse capturing issues that were freezing clicks in certain viewport scales.
+  - **Orientation-Specific Piece Mapping:** Corrected the indexing bug where the board array values were flipped upside down relative to display grid rows for both White and Black orientations. Pieces now render on the correct physical squares for both sides (White always on bottom for White training, Black always on bottom for Black training).
+  - **Interaction Lockout During Moves:** Added `isAnimating` lockout check. Clicking on the board or recommended moves is disabled while a slide transition is currently running, preventing double-clicks or move race conditions.
+  - **Directional Path Render highlights:**
+    - Modified path highlights (for Stockfish Best, Strategy Path, and Hover Previews) from box borders to clear directional indicators.
+    - The starting square receives a **faded/translucent highlight and dashed border**, and the destination square receives a **vibrant/solid highlight and solid border**. This visually indicates the move vector.
+  - **Interactive Board-Hover Blunder Checks:**
+    - When you select a piece, you can hover over its possible move circles directly on the chessboard.
+    - Hovering over a possible target square dynamically triggers the opponent responses preview in the right column, just like hovering over the options in the sidebar, allowing seamless pre-move blunder checks.
+  - **Black King Asset Fix:** Corrected a typo in the Black King (`bK`) SVG asset URL where it referenced `f/0/Chess_kdt45.svg` instead of `f/f0/Chess_kdt45.svg`. The Black King now renders correctly.
+  - **Smooth Piece Slide Transitions:** Implemented a lightweight FLIP (First, Last, Invert, Play) transition inside the custom board. When a move is executed, the piece's coordinates are calculated, it starts offset back to its source position (`transform: translate(x, y)`), and then transitions smoothly to its new square (`transform: translate(0, 0)`) over `320ms` over an ease-out cubic curve. This provides clear, visual feedback for player moves and engine responses.
+  - **Arrow Indicator highlights:** Renders inset rings (emerald for Stockfish best, blue for strategy line, yellow for hovered preview) on the board squares.
+  - **Recommended Step Clicking:** Integrated automated moves when clicking buttons in the sidebar move lists. Clicking any recommendation executes it immediately on the board.
+
+## Verification
+- Successfully compiled the production build using `npm run build`.
+- Checked the Vite development server log; it is running with no errors.

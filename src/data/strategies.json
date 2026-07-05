@@ -1,0 +1,2929 @@
+{
+  "openings": [
+    {
+      "id": "ruy_lopez",
+      "name": "Ruy Lopez",
+      "description": "Learn the Ruy Lopez opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bb5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "italian_game",
+      "name": "Italian Game",
+      "description": "Learn the Italian Game opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bc4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sicilian_defense",
+      "name": "Sicilian Defense",
+      "description": "Learn the Sicilian Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "french_defense",
+      "name": "French Defense",
+      "description": "Learn the French Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "caro_kann_defense",
+      "name": "Caro-Kann Defense",
+      "description": "Learn the Caro-Kann Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "queen_s_gambit",
+      "name": "Queen's Gambit",
+      "description": "Learn the Queen's Gambit opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "slav_defense",
+      "name": "Slav Defense",
+      "description": "Learn the Slav Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "c6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "king_s_indian_defense",
+      "name": "King's Indian Defense",
+      "description": "Learn the King's Indian Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "g6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "english_opening",
+      "name": "English Opening",
+      "description": "Learn the English Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "c4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nimzo_indian_defense",
+      "name": "Nimzo-Indian Defense",
+      "description": "Learn the Nimzo-Indian Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "e6",
+            "Nc3",
+            "Bb4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scotch_game",
+      "name": "Scotch Game",
+      "description": "Learn the Scotch Game opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "d4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "london_system",
+      "name": "London System",
+      "description": "Learn the London System opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "Bf4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scandinavian_defense",
+      "name": "Scandinavian Defense",
+      "description": "Learn the Scandinavian Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "d5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "alekhine_s_defense",
+      "name": "Alekhine's Defense",
+      "description": "Learn the Alekhine's Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "Nf6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pirc_defense",
+      "name": "Pirc Defense",
+      "description": "Learn the Pirc Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "d6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grunfeld_defense",
+      "name": "Grunfeld Defense",
+      "description": "Learn the Grunfeld Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "g6",
+            "Nc3",
+            "d5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "queen_s_indian_defense",
+      "name": "Queen's Indian Defense",
+      "description": "Learn the Queen's Indian Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "e6",
+            "Nf3",
+            "b6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "king_s_gambit",
+      "name": "King's Gambit",
+      "description": "Learn the King's Gambit opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "f4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reti_opening",
+      "name": "Reti Opening",
+      "description": "Learn the Reti Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "Nf3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dutch_defense",
+      "name": "Dutch Defense",
+      "description": "Learn the Dutch Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "f5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "petrov_s_defense",
+      "name": "Petrov's Defense",
+      "description": "Learn the Petrov's Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nf6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bird_s_opening",
+      "name": "Bird's Opening",
+      "description": "Learn the Bird's Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "f4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "benoni_defense",
+      "name": "Benoni Defense",
+      "description": "Learn the Benoni Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "c5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vienna_game",
+      "name": "Vienna Game",
+      "description": "Learn the Vienna Game opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nc3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "modern_defense",
+      "name": "Modern Defense",
+      "description": "Learn the Modern Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "g6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nimzowitsch_larsen_attack",
+      "name": "Nimzowitsch-Larsen Attack",
+      "description": "Learn the Nimzowitsch-Larsen Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "b3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "polish_opening",
+      "name": "Polish Opening",
+      "description": "Learn the Polish Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "b4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trompowsky_attack",
+      "name": "Trompowsky Attack",
+      "description": "Learn the Trompowsky Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "Bg5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "catalan_opening",
+      "name": "Catalan Opening",
+      "description": "Learn the Catalan Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "e6",
+            "g3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "colle_system",
+      "name": "Colle System",
+      "description": "Learn the Colle System opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "Nf3",
+            "Nf6",
+            "e3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bogo_indian_defense",
+      "name": "Bogo-Indian Defense",
+      "description": "Learn the Bogo-Indian Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "e6",
+            "Nf3",
+            "Bb4+"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "philidor_defense",
+      "name": "Philidor Defense",
+      "description": "Learn the Philidor Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "d6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evans_gambit",
+      "name": "Evans Gambit",
+      "description": "Learn the Evans Gambit opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bc4",
+            "Bc5",
+            "b4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "four_knights_game",
+      "name": "Four Knights Game",
+      "description": "Learn the Four Knights Game opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Nc3",
+            "Nf6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "benko_gambit",
+      "name": "Benko Gambit",
+      "description": "Learn the Benko Gambit opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "c5",
+            "d5",
+            "b5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "budapest_gambit",
+      "name": "Budapest Gambit",
+      "description": "Learn the Budapest Gambit opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "e5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "albin_counter_gambit",
+      "name": "Albin Counter-Gambit",
+      "description": "Learn the Albin Counter-Gambit opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "e5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smith_morra_gambit",
+      "name": "Smith-Morra Gambit",
+      "description": "Learn the Smith-Morra Gambit opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "d4",
+            "cxd4",
+            "c3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grob_s_attack",
+      "name": "Grob's Attack",
+      "description": "Learn the Grob's Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "g4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "torre_attack",
+      "name": "Torre Attack",
+      "description": "Learn the Torre Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "Nf3",
+            "e6",
+            "Bg5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chigorin_defense",
+      "name": "Chigorin Defense",
+      "description": "Learn the Chigorin Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "Nc6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stonewall_attack",
+      "name": "Stonewall Attack",
+      "description": "Learn the Stonewall Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "e3",
+            "Nf6",
+            "Bd3",
+            "c5",
+            "c3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "giuoco_piano",
+      "name": "Giuoco Piano",
+      "description": "Learn the Giuoco Piano opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bc4",
+            "Bc5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ponziani_opening",
+      "name": "Ponziani Opening",
+      "description": "Learn the Ponziani Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "c3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "three_knights_game",
+      "name": "Three Knights Game",
+      "description": "Learn the Three Knights Game opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Nc3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "two_knights_defense",
+      "name": "Two Knights Defense",
+      "description": "Learn the Two Knights Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bc4",
+            "Nf6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "old_indian_defense",
+      "name": "Old Indian Defense",
+      "description": "Learn the Old Indian Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "d6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blackmar_diemer_gambit",
+      "name": "Blackmar-Diemer Gambit",
+      "description": "Learn the Blackmar-Diemer Gambit opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "e4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vienna_gambit",
+      "name": "Vienna Gambit",
+      "description": "Learn the Vienna Gambit opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nc3",
+            "Nf6",
+            "f4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grand_prix_attack",
+      "name": "Grand Prix Attack",
+      "description": "Learn the Grand Prix Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nc3",
+            "Nc6",
+            "f4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "closed_sicilian",
+      "name": "Closed Sicilian",
+      "description": "Learn the Closed Sicilian opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nc3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "alapin_variation",
+      "name": "Alapin Variation",
+      "description": "Learn the Alapin Variation opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "c3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sicilian_dragon",
+      "name": "Sicilian Dragon",
+      "description": "Learn the Sicilian Dragon opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nf3",
+            "d6",
+            "d4",
+            "cxd4",
+            "Nxd4",
+            "Nf6",
+            "Nc3",
+            "g6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "najdorf_sicilian",
+      "name": "Najdorf Sicilian",
+      "description": "Learn the Najdorf Sicilian opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nf3",
+            "d6",
+            "d4",
+            "cxd4",
+            "Nxd4",
+            "Nf6",
+            "Nc3",
+            "a6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "french_advance",
+      "name": "French Advance",
+      "description": "Learn the French Advance opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e6",
+            "d4",
+            "d5",
+            "e5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "french_exchange",
+      "name": "French Exchange",
+      "description": "Learn the French Exchange opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e6",
+            "d4",
+            "d5",
+            "exd5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "french_tarrasch",
+      "name": "French Tarrasch",
+      "description": "Learn the French Tarrasch opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e6",
+            "d4",
+            "d5",
+            "Nd2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "caro_kann_advance",
+      "name": "Caro-Kann Advance",
+      "description": "Learn the Caro-Kann Advance opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c6",
+            "d4",
+            "d5",
+            "e5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "caro_kann_exchange",
+      "name": "Caro-Kann Exchange",
+      "description": "Learn the Caro-Kann Exchange opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c6",
+            "d4",
+            "d5",
+            "exd5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "king_s_indian_attack",
+      "name": "King's Indian Attack",
+      "description": "Learn the King's Indian Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "Nf3",
+            "d5",
+            "g3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "english_four_knights",
+      "name": "English Four Knights",
+      "description": "Learn the English Four Knights opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "c4",
+            "c5",
+            "Nc3",
+            "Nc6",
+            "Nf3",
+            "Nf6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "symmetrical_english",
+      "name": "Symmetrical English",
+      "description": "Learn the Symmetrical English opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "c4",
+            "c5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "queen_s_gambit_accepted",
+      "name": "Queen's Gambit Accepted",
+      "description": "Learn the Queen's Gambit Accepted opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "dxc4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "queen_s_gambit_declined",
+      "name": "Queen's Gambit Declined",
+      "description": "Learn the Queen's Gambit Declined opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "e6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "slav_exchange",
+      "name": "Slav Exchange",
+      "description": "Learn the Slav Exchange opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "c6",
+            "cxd5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "semi_slav_defense",
+      "name": "Semi-Slav Defense",
+      "description": "Learn the Semi-Slav Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "c6",
+            "Nc3",
+            "Nf6",
+            "Nf3",
+            "e6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "king_s_fianchetto",
+      "name": "King's Fianchetto",
+      "description": "Learn the King's Fianchetto opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "g3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dunst_opening",
+      "name": "Dunst Opening",
+      "description": "Learn the Dunst Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "Nc3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mieses_opening",
+      "name": "Mieses Opening",
+      "description": "Learn the Mieses Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "van_t_kruijs_opening",
+      "name": "Van't Kruijs Opening",
+      "description": "Learn the Van't Kruijs Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "barnes_opening",
+      "name": "Barnes Opening",
+      "description": "Learn the Barnes Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "f3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ware_opening",
+      "name": "Ware Opening",
+      "description": "Learn the Ware Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "a4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "durkin_opening",
+      "name": "Durkin Opening",
+      "description": "Learn the Durkin Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "Na3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "amar_opening",
+      "name": "Amar Opening",
+      "description": "Learn the Amar Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "Nh3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "clemenz_opening",
+      "name": "Clemenz Opening",
+      "description": "Learn the Clemenz Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "h3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "desprez_opening",
+      "name": "Desprez Opening",
+      "description": "Learn the Desprez Opening opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "h4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sodium_attack",
+      "name": "Sodium Attack",
+      "description": "Learn the Sodium Attack opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "Na3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "owen_s_defense",
+      "name": "Owen's Defense",
+      "description": "Learn the Owen's Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "b6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st_george_defense",
+      "name": "St. George Defense",
+      "description": "Learn the St. George Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "a6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "borg_defense",
+      "name": "Borg Defense",
+      "description": "Learn the Borg Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "g5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "latvian_gambit",
+      "name": "Latvian Gambit",
+      "description": "Learn the Latvian Gambit opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "f5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "elephant_gambit",
+      "name": "Elephant Gambit",
+      "description": "Learn the Elephant Gambit opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "d5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "damiano_defense",
+      "name": "Damiano Defense",
+      "description": "Learn the Damiano Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "f6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vienna_variation_qgd_",
+      "name": "Vienna Variation (QGD)",
+      "description": "Learn the Vienna Variation (QGD) opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "e6",
+            "Nc3",
+            "Nf6",
+            "Nf3",
+            "Bb4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tarrasch_defense",
+      "name": "Tarrasch Defense",
+      "description": "Learn the Tarrasch Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "d5",
+            "c4",
+            "e6",
+            "Nc3",
+            "c5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marshall_attack",
+      "name": "Marshall Attack",
+      "description": "Learn the Marshall Attack opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bb5",
+            "a6",
+            "Ba4",
+            "Nf6",
+            "O-O",
+            "Be7",
+            "Re1",
+            "b5",
+            "Bb3",
+            "O-O",
+            "c3",
+            "d5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "berlin_defense",
+      "name": "Berlin Defense",
+      "description": "Learn the Berlin Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bb5",
+            "Nf6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "schliemann_defense",
+      "name": "Schliemann Defense",
+      "description": "Learn the Schliemann Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bb5",
+            "f5"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "steinitz_defense",
+      "name": "Steinitz Defense",
+      "description": "Learn the Steinitz Defense opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bb5",
+            "d6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "exchange_ruy_lopez",
+      "name": "Exchange Ruy Lopez",
+      "description": "Learn the Exchange Ruy Lopez opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bb5",
+            "a6",
+            "Bxc6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "modern_benoni",
+      "name": "Modern Benoni",
+      "description": "Learn the Modern Benoni opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "d4",
+            "Nf6",
+            "c4",
+            "c5",
+            "d5",
+            "e6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "botvinnik_system",
+      "name": "Botvinnik System",
+      "description": "Learn the Botvinnik System opening as white.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "c4",
+            "c5",
+            "Nc3",
+            "Nc6",
+            "g3",
+            "g6",
+            "Bg2",
+            "Bg7",
+            "e4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "winawer_variation",
+      "name": "Winawer Variation",
+      "description": "Learn the Winawer Variation opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e6",
+            "d4",
+            "d5",
+            "Nc3",
+            "Bb4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rubinstein_variation",
+      "name": "Rubinstein Variation",
+      "description": "Learn the Rubinstein Variation opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e6",
+            "d4",
+            "d5",
+            "Nc3",
+            "dxe4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classical_french",
+      "name": "Classical French",
+      "description": "Learn the Classical French opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "e6",
+            "d4",
+            "d5",
+            "Nc3",
+            "Nf6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accelerated_dragon",
+      "name": "Accelerated Dragon",
+      "description": "Learn the Accelerated Dragon opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nf3",
+            "Nc6",
+            "d4",
+            "cxd4",
+            "Nxd4",
+            "g6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hyper_accelerated_dragon",
+      "name": "Hyper-Accelerated Dragon",
+      "description": "Learn the Hyper-Accelerated Dragon opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nf3",
+            "g6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "taimanov_sicilian",
+      "name": "Taimanov Sicilian",
+      "description": "Learn the Taimanov Sicilian opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nf3",
+            "e6",
+            "d4",
+            "cxd4",
+            "Nxd4",
+            "Nc6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sveshnikov_sicilian",
+      "name": "Sveshnikov Sicilian",
+      "description": "Learn the Sveshnikov Sicilian opening as black.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "black",
+      "lines": [
+        {
+          "name": "Main Line",
+          "moves": [
+            "e4",
+            "c5",
+            "Nf3",
+            "Nc6",
+            "d4",
+            "cxd4",
+            "Nxd4",
+            "Nf6",
+            "Nc3",
+            "e5"
+          ]
+        }
+      ]
+    }
+  ],
+  "midgames": [
+    {
+      "id": "tactical_motifs_fork",
+      "name": "Tactical Motifs: Fork",
+      "description": "Train and practice the concept of Fork on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_pin",
+      "name": "Tactical Motifs: Pin",
+      "description": "Train and practice the concept of Pin on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_skewer",
+      "name": "Tactical Motifs: Skewer",
+      "description": "Train and practice the concept of Skewer on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_discovered_attack",
+      "name": "Tactical Motifs: Discovered Attack",
+      "description": "Train and practice the concept of Discovered Attack on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_discovered_check",
+      "name": "Tactical Motifs: Discovered Check",
+      "description": "Train and practice the concept of Discovered Check on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_double_check",
+      "name": "Tactical Motifs: Double Check",
+      "description": "Train and practice the concept of Double Check on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_removing_the_defender",
+      "name": "Tactical Motifs: Removing the Defender",
+      "description": "Train and practice the concept of Removing the Defender on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_deflection",
+      "name": "Tactical Motifs: Deflection",
+      "description": "Train and practice the concept of Deflection on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_decoy",
+      "name": "Tactical Motifs: Decoy",
+      "description": "Train and practice the concept of Decoy on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_interference",
+      "name": "Tactical Motifs: Interference",
+      "description": "Train and practice the concept of Interference on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_x_ray_attack",
+      "name": "Tactical Motifs: X-Ray Attack",
+      "description": "Train and practice the concept of X-Ray Attack on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_zwischenzug_intermediate_move_",
+      "name": "Tactical Motifs: Zwischenzug (Intermediate Move)",
+      "description": "Train and practice the concept of Zwischenzug (Intermediate Move) on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_smothered_mate",
+      "name": "Tactical Motifs: Smothered Mate",
+      "description": "Train and practice the concept of Smothered Mate on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_back_rank_mate",
+      "name": "Tactical Motifs: Back Rank Mate",
+      "description": "Train and practice the concept of Back Rank Mate on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_battery",
+      "name": "Tactical Motifs: Battery",
+      "description": "Train and practice the concept of Battery on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_clearance",
+      "name": "Tactical Motifs: Clearance",
+      "description": "Train and practice the concept of Clearance on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_promotion_tactics",
+      "name": "Tactical Motifs: Promotion Tactics",
+      "description": "Train and practice the concept of Promotion Tactics on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_underpromotion",
+      "name": "Tactical Motifs: Underpromotion",
+      "description": "Train and practice the concept of Underpromotion on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_perpetual_check",
+      "name": "Tactical Motifs: Perpetual Check",
+      "description": "Train and practice the concept of Perpetual Check on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "tactical_motifs_zugzwang",
+      "name": "Tactical Motifs: Zugzwang",
+      "description": "Train and practice the concept of Zugzwang on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_centralization",
+      "name": "Positional Concepts: Centralization",
+      "description": "Train and practice the concept of Centralization on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_space_advantage",
+      "name": "Positional Concepts: Space Advantage",
+      "description": "Train and practice the concept of Space Advantage on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_bishop_pair",
+      "name": "Positional Concepts: Bishop Pair",
+      "description": "Train and practice the concept of Bishop Pair on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_outpost",
+      "name": "Positional Concepts: Outpost",
+      "description": "Train and practice the concept of Outpost on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_weak_square_complex",
+      "name": "Positional Concepts: Weak Square Complex",
+      "description": "Train and practice the concept of Weak Square Complex on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_isolated_pawn",
+      "name": "Positional Concepts: Isolated Pawn",
+      "description": "Train and practice the concept of Isolated Pawn on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_doubled_pawns",
+      "name": "Positional Concepts: Doubled Pawns",
+      "description": "Train and practice the concept of Doubled Pawns on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_backward_pawn",
+      "name": "Positional Concepts: Backward Pawn",
+      "description": "Train and practice the concept of Backward Pawn on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_open_file",
+      "name": "Positional Concepts: Open File",
+      "description": "Train and practice the concept of Open File on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_semi_open_file",
+      "name": "Positional Concepts: Semi-Open File",
+      "description": "Train and practice the concept of Semi-Open File on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_pawn_chain",
+      "name": "Positional Concepts: Pawn Chain",
+      "description": "Train and practice the concept of Pawn Chain on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_pawn_island",
+      "name": "Positional Concepts: Pawn Island",
+      "description": "Train and practice the concept of Pawn Island on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_bad_bishop",
+      "name": "Positional Concepts: Bad Bishop",
+      "description": "Train and practice the concept of Bad Bishop on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_good_bishop",
+      "name": "Positional Concepts: Good Bishop",
+      "description": "Train and practice the concept of Good Bishop on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_minority_attack",
+      "name": "Positional Concepts: Minority Attack",
+      "description": "Train and practice the concept of Minority Attack on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_space_restraint",
+      "name": "Positional Concepts: Space Restraint",
+      "description": "Train and practice the concept of Space Restraint on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_prophylaxis",
+      "name": "Positional Concepts: Prophylaxis",
+      "description": "Train and practice the concept of Prophylaxis on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_king_safety",
+      "name": "Positional Concepts: King Safety",
+      "description": "Train and practice the concept of King Safety on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_piece_activity",
+      "name": "Positional Concepts: Piece Activity",
+      "description": "Train and practice the concept of Piece Activity on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "positional_concepts_least_active_piece_lap_strategy",
+      "name": "Positional Concepts: Least Active Piece (LAP) Strategy",
+      "description": "Train and practice the concept of Least Active Piece (LAP) Strategy on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_king_side_attack",
+      "name": "Strategic Plans: King Side Attack",
+      "description": "Train and practice the concept of King Side Attack on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_queen_side_attack",
+      "name": "Strategic Plans: Queen Side Attack",
+      "description": "Train and practice the concept of Queen Side Attack on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_central_breakout",
+      "name": "Strategic Plans: Central Breakout",
+      "description": "Train and practice the concept of Central Breakout on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_pawn_storm",
+      "name": "Strategic Plans: Pawn Storm",
+      "description": "Train and practice the concept of Pawn Storm on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_endgame_transition",
+      "name": "Strategic Plans: Endgame Transition",
+      "description": "Train and practice the concept of Endgame Transition on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_exchange_sacrifice",
+      "name": "Strategic Plans: Exchange Sacrifice",
+      "description": "Train and practice the concept of Exchange Sacrifice on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_blockade",
+      "name": "Strategic Plans: Blockade",
+      "description": "Train and practice the concept of Blockade on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_simplification",
+      "name": "Strategic Plans: Simplification",
+      "description": "Train and practice the concept of Simplification on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_maintaining_tension",
+      "name": "Strategic Plans: Maintaining Tension",
+      "description": "Train and practice the concept of Maintaining Tension on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_dynamic_compensation",
+      "name": "Strategic Plans: Dynamic Compensation",
+      "description": "Train and practice the concept of Dynamic Compensation on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_fortress",
+      "name": "Strategic Plans: Fortress",
+      "description": "Train and practice the concept of Fortress on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_manuevering",
+      "name": "Strategic Plans: Manuevering",
+      "description": "Train and practice the concept of Manuevering on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_restricting_opponent_pieces",
+      "name": "Strategic Plans: Restricting Opponent Pieces",
+      "description": "Train and practice the concept of Restricting Opponent Pieces on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_pawn_breakthrough",
+      "name": "Strategic Plans: Pawn Breakthrough",
+      "description": "Train and practice the concept of Pawn Breakthrough on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_improvement_of_worst_piece",
+      "name": "Strategic Plans: Improvement of Worst Piece",
+      "description": "Train and practice the concept of Improvement of Worst Piece on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_creating_imbalances",
+      "name": "Strategic Plans: Creating Imbalances",
+      "description": "Train and practice the concept of Creating Imbalances on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_pressure_on_pinned_pieces",
+      "name": "Strategic Plans: Pressure on Pinned Pieces",
+      "description": "Train and practice the concept of Pressure on Pinned Pieces on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_undermining",
+      "name": "Strategic Plans: Undermining",
+      "description": "Train and practice the concept of Undermining on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_overloading",
+      "name": "Strategic Plans: Overloading",
+      "description": "Train and practice the concept of Overloading on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "strategic_plans_attacking_the_base_of_a_pawn_chain",
+      "name": "Strategic Plans: Attacking the Base of a Pawn Chain",
+      "description": "Train and practice the concept of Attacking the Base of a Pawn Chain on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_iq_isolated_queen_s_pawn_",
+      "name": "Typical Structures: IQ (Isolated Queen's Pawn)",
+      "description": "Train and practice the concept of IQ (Isolated Queen's Pawn) on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_hanging_pawns",
+      "name": "Typical Structures: Hanging Pawns",
+      "description": "Train and practice the concept of Hanging Pawns on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_carlsbad_structure",
+      "name": "Typical Structures: Carlsbad Structure",
+      "description": "Train and practice the concept of Carlsbad Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_maroczy_bind",
+      "name": "Typical Structures: Maroczy Bind",
+      "description": "Train and practice the concept of Maroczy Bind on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_stonewall_formation",
+      "name": "Typical Structures: Stonewall Formation",
+      "description": "Train and practice the concept of Stonewall Formation on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_scheveningen_structure",
+      "name": "Typical Structures: Scheveningen Structure",
+      "description": "Train and practice the concept of Scheveningen Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_dragon_formation",
+      "name": "Typical Structures: Dragon Formation",
+      "description": "Train and practice the concept of Dragon Formation on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_closed_center",
+      "name": "Typical Structures: Closed Center",
+      "description": "Train and practice the concept of Closed Center on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_open_center",
+      "name": "Typical Structures: Open Center",
+      "description": "Train and practice the concept of Open Center on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_fixed_center",
+      "name": "Typical Structures: Fixed Center",
+      "description": "Train and practice the concept of Fixed Center on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_advance_french_structure",
+      "name": "Typical Structures: Advance French Structure",
+      "description": "Train and practice the concept of Advance French Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_exchange_french_structure",
+      "name": "Typical Structures: Exchange French Structure",
+      "description": "Train and practice the concept of Exchange French Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_panov_botvinnik_formation",
+      "name": "Typical Structures: Panov-Botvinnik Formation",
+      "description": "Train and practice the concept of Panov-Botvinnik Formation on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_king_s_indian_pawn_structure",
+      "name": "Typical Structures: King's Indian Pawn Structure",
+      "description": "Train and practice the concept of King's Indian Pawn Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_grunfeld_structure",
+      "name": "Typical Structures: Grunfeld Structure",
+      "description": "Train and practice the concept of Grunfeld Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_slav_pawn_structure",
+      "name": "Typical Structures: Slav Pawn Structure",
+      "description": "Train and practice the concept of Slav Pawn Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_symmetrical_english",
+      "name": "Typical Structures: Symmetrical English",
+      "description": "Train and practice the concept of Symmetrical English on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_boleslavsky_hole",
+      "name": "Typical Structures: Boleslavsky Hole",
+      "description": "Train and practice the concept of Boleslavsky Hole on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_pirc_modern_setup",
+      "name": "Typical Structures: Pirc/Modern Setup",
+      "description": "Train and practice the concept of Pirc/Modern Setup on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "typical_structures_benoni_structure",
+      "name": "Typical Structures: Benoni Structure",
+      "description": "Train and practice the concept of Benoni Structure on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_the_principle_of_two_weaknesses",
+      "name": "Advanced Principles: The Principle of Two Weaknesses",
+      "description": "Train and practice the concept of The Principle of Two Weaknesses on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_dynamic_vs_static_advantages",
+      "name": "Advanced Principles: Dynamic vs Static Advantages",
+      "description": "Train and practice the concept of Dynamic vs Static Advantages on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_coordination",
+      "name": "Advanced Principles: Coordination",
+      "description": "Train and practice the concept of Coordination on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_prophylactic_thinking",
+      "name": "Advanced Principles: Prophylactic Thinking",
+      "description": "Train and practice the concept of Prophylactic Thinking on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_calculation_depth",
+      "name": "Advanced Principles: Calculation Depth",
+      "description": "Train and practice the concept of Calculation Depth on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_candidate_moves",
+      "name": "Advanced Principles: Candidate Moves",
+      "description": "Train and practice the concept of Candidate Moves on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_elimination_of_counterplay",
+      "name": "Advanced Principles: Elimination of Counterplay",
+      "description": "Train and practice the concept of Elimination of Counterplay on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_accumulation_theory",
+      "name": "Advanced Principles: Accumulation Theory",
+      "description": "Train and practice the concept of Accumulation Theory on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_restricted_mobility",
+      "name": "Advanced Principles: Restricted Mobility",
+      "description": "Train and practice the concept of Restricted Mobility on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_color_complex_control",
+      "name": "Advanced Principles: Color Complex Control",
+      "description": "Train and practice the concept of Color Complex Control on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_space_time_tradeoff",
+      "name": "Advanced Principles: Space-Time Tradeoff",
+      "description": "Train and practice the concept of Space-Time Tradeoff on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_tension_management",
+      "name": "Advanced Principles: Tension Management",
+      "description": "Train and practice the concept of Tension Management on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_tempo_preservation",
+      "name": "Advanced Principles: Tempo Preservation",
+      "description": "Train and practice the concept of Tempo Preservation on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_harmonious_piece_placement",
+      "name": "Advanced Principles: Harmonious Piece Placement",
+      "description": "Train and practice the concept of Harmonious Piece Placement on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_evaluating_piece_exchanges",
+      "name": "Advanced Principles: Evaluating Piece Exchanges",
+      "description": "Train and practice the concept of Evaluating Piece Exchanges on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_cornering_the_king",
+      "name": "Advanced Principles: Cornering the King",
+      "description": "Train and practice the concept of Cornering the King on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_rook_lift",
+      "name": "Advanced Principles: Rook Lift",
+      "description": "Train and practice the concept of Rook Lift on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_queen_maneuvers",
+      "name": "Advanced Principles: Queen Maneuvers",
+      "description": "Train and practice the concept of Queen Maneuvers on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_pawn_play_dynamics",
+      "name": "Advanced Principles: Pawn Play Dynamics",
+      "description": "Train and practice the concept of Pawn Play Dynamics on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "advanced_principles_initiative_maintenance",
+      "name": "Advanced Principles: Initiative Maintenance",
+      "description": "Train and practice the concept of Initiative Maintenance on an open board. Analyze checks, captures, and threats dynamically with Stockfish.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    }
+  ],
+  "endgames": [
+    {
+      "id": "basic_checkmates_king_queen_vs_king",
+      "name": "Basic Checkmates: King + Queen vs King",
+      "description": "Practice the King + Queen vs King chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "k7/8/8/8/8/8/3Q4/3K4 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "basic_checkmates_king_rook_vs_king",
+      "name": "Basic Checkmates: King + Rook vs King",
+      "description": "Practice the King + Rook vs King chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "k7/8/8/8/8/8/3R4/3K4 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "basic_checkmates_king_two_bishops_vs_king",
+      "name": "Basic Checkmates: King + Two Bishops vs King",
+      "description": "Practice the King + Two Bishops vs King chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "k7/8/8/8/8/8/3BB3/3K4 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "basic_checkmates_king_bishop_knight_vs_king",
+      "name": "Basic Checkmates: King + Bishop + Knight vs King",
+      "description": "Practice the King + Bishop + Knight vs King chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "k7/8/8/8/8/8/3BN3/3K4 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_opposition",
+      "name": "Pawn Endgames: Opposition",
+      "description": "Practice the Opposition chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_triangulation",
+      "name": "Pawn Endgames: Triangulation",
+      "description": "Practice the Triangulation chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_key_squares",
+      "name": "Pawn Endgames: Key Squares",
+      "description": "Practice the Key Squares chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_the_square_of_the_pawn",
+      "name": "Pawn Endgames: The Square of the Pawn",
+      "description": "Practice the The Square of the Pawn chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_outside_passed_pawn",
+      "name": "Pawn Endgames: Outside Passed Pawn",
+      "description": "Practice the Outside Passed Pawn chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_r_ti_maneuver",
+      "name": "Pawn Endgames: Réti Maneuver",
+      "description": "Practice the Réti Maneuver chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_candidate_passed_pawns",
+      "name": "Pawn Endgames: Candidate Passed Pawns",
+      "description": "Practice the Candidate Passed Pawns chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "pawn_endgames_zugzwang_in_pawn_endings",
+      "name": "Pawn Endgames: Zugzwang in Pawn Endings",
+      "description": "Practice the Zugzwang in Pawn Endings chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "rook_endgames_lucena_position_the_bridge_",
+      "name": "Rook Endgames: Lucena Position (The Bridge)",
+      "description": "Practice the Lucena Position (The Bridge) chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "1K6/1P1k4/8/8/8/8/8/2R5 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "rook_endgames_philidor_position",
+      "name": "Rook Endgames: Philidor Position",
+      "description": "Practice the Philidor Position chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "8/1r6/8/8/8/2k5/1p6/1K5R w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "rook_endgames_vancura_defense",
+      "name": "Rook Endgames: Vancura Defense",
+      "description": "Practice the Vancura Defense chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "rook_endgames_distant_side_checks",
+      "name": "Rook Endgames: Distant Side Checks",
+      "description": "Practice the Distant Side Checks chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "rook_endgames_rook_on_4th_6th_rank_cutting_off_the_king_",
+      "name": "Rook Endgames: Rook on 4th/6th Rank (Cutting off the King)",
+      "description": "Practice the Rook on 4th/6th Rank (Cutting off the King) chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "rook_endgames_rook_vs_pawn",
+      "name": "Rook Endgames: Rook vs Pawn",
+      "description": "Practice the Rook vs Pawn chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "k7/8/8/8/8/6p1/5R2/4K3 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "rook_endgames_rook_pawn_vs_rook",
+      "name": "Rook Endgames: Rook + Pawn vs Rook",
+      "description": "Practice the Rook + Pawn vs Rook chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "minor_piece_endgames_bishop_vs_pawn",
+      "name": "Minor Piece Endgames: Bishop vs Pawn",
+      "description": "Practice the Bishop vs Pawn chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "k7/8/8/8/8/6p1/5B2/4K3 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "minor_piece_endgames_knight_vs_pawn",
+      "name": "Minor Piece Endgames: Knight vs Pawn",
+      "description": "Practice the Knight vs Pawn chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "k7/8/8/8/8/6p1/5N2/4K3 w - - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "minor_piece_endgames_bishop_of_same_color",
+      "name": "Minor Piece Endgames: Bishop of Same Color",
+      "description": "Practice the Bishop of Same Color chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "minor_piece_endgames_bishops_of_opposite_colors",
+      "name": "Minor Piece Endgames: Bishops of Opposite Colors",
+      "description": "Practice the Bishops of Opposite Colors chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "minor_piece_endgames_bishop_vs_knight",
+      "name": "Minor Piece Endgames: Bishop vs Knight",
+      "description": "Practice the Bishop vs Knight chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "minor_piece_endgames_knight_pawn_vs_knight",
+      "name": "Minor Piece Endgames: Knight + Pawn vs Knight",
+      "description": "Practice the Knight + Pawn vs Knight chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "complex_endgames_queen_vs_rook",
+      "name": "Complex Endgames: Queen vs Rook",
+      "description": "Practice the Queen vs Rook chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "complex_endgames_rook_bishop_vs_rook",
+      "name": "Complex Endgames: Rook + Bishop vs Rook",
+      "description": "Practice the Rook + Bishop vs Rook chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "complex_endgames_queen_vs_rook_minor_piece",
+      "name": "Complex Endgames: Queen vs Rook + Minor Piece",
+      "description": "Practice the Queen vs Rook + Minor Piece chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "complex_endgames_two_minor_pieces_vs_rook",
+      "name": "Complex Endgames: Two Minor Pieces vs Rook",
+      "description": "Practice the Two Minor Pieces vs Rook chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "complex_endgames_fortress_positions",
+      "name": "Complex Endgames: Fortress Positions",
+      "description": "Practice the Fortress Positions chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_active_king",
+      "name": "Key Patterns And Principles: Active King",
+      "description": "Practice the Active King chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_prophylaxis",
+      "name": "Key Patterns And Principles: Prophylaxis",
+      "description": "Practice the Prophylaxis chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_blockade",
+      "name": "Key Patterns And Principles: Blockade",
+      "description": "Practice the Blockade chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_distant_passed_pawns",
+      "name": "Key Patterns And Principles: Distant Passed Pawns",
+      "description": "Practice the Distant Passed Pawns chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_reserve_tempi",
+      "name": "Key Patterns And Principles: Reserve Tempi",
+      "description": "Practice the Reserve Tempi chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_lateral_zonal_defense",
+      "name": "Key Patterns And Principles: Lateral/Zonal Defense",
+      "description": "Practice the Lateral/Zonal Defense chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_bad_bishop_vs_good_knight",
+      "name": "Key Patterns And Principles: Bad Bishop vs Good Knight",
+      "description": "Practice the Bad Bishop vs Good Knight chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_minority_attack",
+      "name": "Key Patterns And Principles: Minority Attack",
+      "description": "Practice the Minority Attack chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    },
+    {
+      "id": "key_patterns_and_principles_pawn_breakthrough",
+      "name": "Key Patterns And Principles: Pawn Breakthrough",
+      "description": "Practice the Pawn Breakthrough chess endgame. Master checks, captures, and threats dynamically with Stockfish analysis.",
+      "startingFen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "color": "white",
+      "lines": []
+    }
+  ]
+}

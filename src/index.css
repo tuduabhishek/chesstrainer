@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+:root {
+  /* Light mode (default) definitions */
+  --bg-app: #f8fafc;
+  --bg-panel: rgba(255, 255, 255, 0.9);
+  --border-panel: rgba(15, 23, 42, 0.1);
+  
+  --bg-square-dark: #b58863;
+  --bg-square-light: #f0d9b5;
+
+  /* Redefine Tailwind slates for light mode (inverse of dark mode slate scales) */
+  --color-slate-950: #f8fafc;
+  --color-slate-900: #f1f5f9;
+  --color-slate-800: #e2e8f0;
+  --color-slate-700: #cbd5e1;
+  --color-slate-600: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-400: #475569;
+  --color-slate-300: #334155;
+  --color-slate-200: #1e293b;
+  --color-slate-100: #0f172a;
+}
+
+.dark {
+  /* Dark mode overrides */
+  --bg-app: #0b0f19;
+  --bg-panel: rgba(15, 23, 42, 0.85);
+  --border-panel: rgba(255, 255, 255, 0.08);
+  
+  --bg-square-dark: #475569;
+  --bg-square-light: #cbd5e1;
+
+  --color-slate-950: #02040a;
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-slate-700: #334155;
+  --color-slate-600: #475569;
+  --color-slate-500: #64748b;
+  --color-slate-400: #94a3b8;
+  --color-slate-300: #cbd5e1;
+  --color-slate-200: #e2e8f0;
+  --color-slate-100: #f8fafc;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 min-h-screen flex flex-col;
+  background-color: var(--bg-app);
+}
+
+@utility glass-panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+@utility btn-primary {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+}
+
+/* Beautiful flat chessboard background grid pattern for layout */
+.bg-chess-pattern {
+  position: relative;
+  background-color: var(--bg-app);
+}
+
+/* Chessboard square custom background overrides */
+.bg-board-light {
+  background-color: var(--bg-square-light);
+}
+
+.bg-board-dark {
+  background-color: var(--bg-square-dark);
+}
