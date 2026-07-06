@@ -1,11 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Chess } from 'chess.js';
 import './index.css';
 import strategiesData from './data/strategies.json';
 import { calculateCCTP } from './utils/cctp';
+import { explainMove } from './utils/moveExplainer';
 import { StockfishEngine } from './engine/stockfish';
 import { Peer } from 'peerjs';
 import { QRCodeSVG } from 'qrcode.react';
+
+const StrategyMetrics = ({ popularity = 3, complexity = 3 }) => {
+  return (
+    <div className="flex items-center gap-4 mt-3">
+      <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-wide" title="Popularity">
+        <span className="text-orange-500 text-xs">🔥</span>
+        <div className="flex gap-0.5">
+          {[...Array(5)].map((_, i) => (
+            <span key={i} className={`w-1.5 h-1.5 rounded-full ${i < popularity ? 'bg-orange-500 shadow-[0_0_5px_rgba(249,115,22,0.5)]' : 'bg-slate-700/50'}`}></span>
+          ))}
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-wide" title="Complexity">
+        <span className="text-purple-400 text-xs">🧠</span>
+        <div className="flex gap-0.5">
+          {[...Array(5)].map((_, i) => (
+            <span key={i} className={`w-1.5 h-1.5 rounded-full ${i < complexity ? 'bg-purple-500 shadow-[0_0_5px_rgba(168,85,247,0.5)]' : 'bg-slate-700/50'}`}></span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Custom Chessboard Component with smooth FLIP transitions and inline hover hooks
 function CustomChessboard({ 
@@ -223,20 +247,14 @@ function App() {
   // Homepage Filters
   const [categoryFilter, setCategoryFilter] = useState('all'); // all, openings, midgames, endgames
   const [sideFilter, setSideFilter] = useState('all'); // all, white, black
+  const [sortOption, setSortOption] = useState('none'); // none, popularity-desc, popularity-asc, complexity-desc, complexity-asc
 
   // Click-to-move & Highlight states
   const [selectedSquare, setSelectedSquare] = useState('');
   const [optionSquares, setOptionSquares] = useState({});
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Tutor Enabled state loaded from localStorage (defaults to true)
-  const [quizEnabled, setQuizEnabled] = useState(() => {
-    const saved = localStorage.getItem('chesstrainer_tutor_enabled');
-    return saved !== null ? saved === 'true' : true;
-  });
-  const [speechEnabled, setSpeechEnabled] = useState(false);
-  const [activeQuestion, setActiveQuestion] = useState(null);
-  const [quizFeedback, setQuizFeedback] = useState(null);
+  const [cctpFeedback, setCctpFeedback] = useState(null);
 
   // Metrics Data State loaded from localStorage
   const [metricsData, setMetricsData] = useState(() => {
@@ -249,12 +267,14 @@ function App() {
 
   // Move options & Engine States
   const [cctpData, setCctpData] = useState({ checks: [], captures: [], threats: [], plans: [] });
+  const [showCctpHelp, setShowCctpHelp] = useState(false);
   const [hoveredMove, setHoveredMove] = useState(null);
   const [engine, setEngine] = useState(null);
-  const [bestMove, setBestMove] = useState(null);
+  const [bestMoves, setBestMoves] = useState([]);
   const [hoveredOpponentCCTP, setHoveredOpponentCCTP] = useState(null);
   // Tap-to-preview state for touch interfaces (replaces hover-only interactions)
   const [selectedMovePreview, setSelectedMovePreview] = useState(null); // move object currently tapped/selected for preview
+  const [requireTapToConfirm, setRequireTapToConfirm] = useState(() => window.matchMedia('(pointer: coarse)').matches);
 
   // Deviation States
   const [deviated, setDeviated] = useState(false);
@@ -310,33 +330,59 @@ function App() {
   };
 
   // Process and combine all strategies for the homepage dashboard
-  const allStrategies = [
-    ...(strategiesData.openings || []).map(item => ({ ...item, category: 'openings' })),
-    ...(strategiesData.midgames || []).map(item => ({ ...item, category: 'midgames' })),
-    ...(strategiesData.endgames || []).map(item => ({ ...item, category: 'endgames' }))
-  ];
+  const allStrategies = useMemo(() => {
+    const rawStrategies = [
+      ...(strategiesData.openings || []).map(item => ({ ...item, category: 'openings' })),
+      ...(strategiesData.midgames || []).map(item => ({ ...item, category: 'midgames' })),
+      ...(strategiesData.endgames || []).map(item => ({ ...item, category: 'endgames' }))
+    ];
+    
+    // Pre-calculate CCTP stats once per session to avoid UI lag during search
+    return rawStrategies.map(item => {
+      const cctp = calculateCCTP(item.startingFen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+      return {
+        ...item,
+        checkCount: cctp.checks.length,
+        captureCount: cctp.captures.length,
+        threatCount: cctp.threats.length,
+      };
+    });
+  }, []);
 
   // Filter strategies based on homepage controls
-  const filteredStrategies = allStrategies.filter(item => {
-    // 1. Category Filter
-    if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
+  const filteredStrategies = useMemo(() => {
+    return allStrategies.filter(item => {
+      // 1. Category Filter
+      if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
 
-    // 2. Side Filter
-    if (sideFilter !== 'all') {
-      if (item.category === 'openings' && item.color !== sideFilter) return false;
-    }
+      // 2. Side Filter
+      if (sideFilter !== 'all') {
+        if (item.category === 'openings' && item.color !== sideFilter) return false;
+      }
 
-    // 3. Search Query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      const nameMatch = item.name.toLowerCase().includes(query);
-      const descMatch = item.description.toLowerCase().includes(query);
-      const categoryMatch = item.category.toLowerCase().includes(query);
-      if (!nameMatch && !descMatch && !categoryMatch) return false;
-    }
+      // 3. Search Query
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const nameMatch = item.name.toLowerCase().includes(query);
+        const descMatch = item.description.toLowerCase().includes(query);
+        const categoryMatch = item.category.toLowerCase().includes(query);
+        if (!nameMatch && !descMatch && !categoryMatch) return false;
+      }
 
-    return true;
-  });
+      return true;
+    }).sort((a, b) => {
+      if (sortOption === 'popularity-desc') {
+        return (b.popularity || 0) - (a.popularity || 0);
+      } else if (sortOption === 'popularity-asc') {
+        return (a.popularity || 0) - (b.popularity || 0);
+      } else if (sortOption === 'complexity-desc') {
+        return (b.complexity || 0) - (a.complexity || 0);
+      } else if (sortOption === 'complexity-asc') {
+        return (a.complexity || 0) - (b.complexity || 0);
+      }
+      return 0; // 'none'
+    });
+  }, [allStrategies, categoryFilter, sideFilter, searchQuery, sortOption]);
 
   // Initialize Stockfish
   useEffect(() => {
@@ -387,8 +433,7 @@ function App() {
     setOptionSquares({});
     setLastMove(null);
     setIsAnimating(false);
-    setActiveQuestion(null);
-    setQuizFeedback(null);
+    setCctpFeedback(null);
   }, [selectedStrategy]);
 
   // Calculate move options and run engine evaluation on every move
@@ -398,45 +443,35 @@ function App() {
       const currentCCTP = calculateCCTP(fen);
       setCctpData(currentCCTP);
       setHoveredOpponentCCTP(null); // Clear preview
+      setBestMoves([]); // Clear stale engine suggestions immediately on move/turn change
 
-      if (engine) {
-        engine.onBestMove = (uci) => {
+      const strategyLineMoves = (gameMode === 'strategy' && selectedStrategy?.lines?.[0]?.moves) || [];
+      const strategyTaught = strategyLineMoves.length > 0 && game.history().length >= strategyLineMoves.length;
+      const isStrategyTeaching = gameMode === 'strategy' && !deviated && !strategyTaught;
+
+      if (gameMode !== 'local-vs-local' && gameMode !== 'multiplayer' && !isStrategyTeaching && engine) {
+        engine.onTopMoves = (uciMoves) => {
           const moves = game.moves({ verbose: true });
-          const matched = moves.find(m => m.from === uci.slice(0, 2) && m.to === uci.slice(2, 4));
-          if (matched) {
-            setBestMove(matched);
-          }
+          const matchedMoves = [];
+          
+          uciMoves.forEach((uci) => {
+            const matched = moves.find(m => m.from === uci.slice(0, 2) && m.to === uci.slice(2, 4));
+            if (matched) {
+              matchedMoves.push(matched);
+            }
+          });
+          setBestMoves(matchedMoves);
         };
         engine.evaluate(fen);
+      } else {
+        setBestMoves([]);
       }
     }
-  }, [game, tick, engine, view]);
+  }, [game, tick, engine, view, gameMode, deviated, selectedStrategy]);
 
-  // Web Speech API text-to-speech helper
-  const speakText = (text) => {
-    if (speechEnabled && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      // Refine voice notation pronunciations
-      const cleaned = text
-        .replace(/(\w)(\d)/g, '$1 $2') // e.g. e4 -> e 4
-        .replace(/➔/g, 'to')
-        .replace(/→/g, 'to');
 
-      const utterance = new SpeechSynthesisUtterance(cleaned);
-      const voices = window.speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => v.lang.startsWith('en-'));
-      if (englishVoice) {
-        utterance.voice = englishVoice;
-      }
-      window.speechSynthesis.speak(utterance);
-    }
-  };
 
-  // Automated Opponent / Trainer response move
   useEffect(() => {
-    // PAUSE opponent response while quiz is active
-    if (activeQuestion || quizFeedback) return;
-
     // In local vs local or simulation, there's no automated opponent - both players click manually
     if (gameMode === 'local-vs-local' || gameMode === 'simulation') return;
 
@@ -445,8 +480,8 @@ function App() {
         let movePlayed = false;
         
         // 1. In AI Coach mode: opponent autoplay always plays the Stockfish best move
-        if (gameMode === 'ai-coach' && bestMove) {
-          makeMove(bestMove, true);
+        if (gameMode === 'ai-coach' && bestMoves.length > 0) {
+          makeMove(bestMoves[0], true);
           movePlayed = true;
         }
 
@@ -456,33 +491,33 @@ function App() {
           const history = game.history();
           
           if (history.length < lineMoves.length) {
-            // Still inside the strategy teaching phase - play a random legal move
+            // Play the exact strategy move dictated by the line
+            const expectedMoveSan = lineMoves[history.length];
             const legalMoves = game.moves({ verbose: true });
-            if (legalMoves.length > 0) {
-              const randomMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
-              makeMove(randomMove, true);
+            const foundMove = legalMoves.find(m => m.san === expectedMoveSan);
+            if (foundMove) {
+              makeMove(foundMove, true);
               movePlayed = true;
+            } else {
+              // Fallback to random move if the strategy is somehow invalid for this position
+              if (legalMoves.length > 0) {
+                const randomMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+                makeMove(randomMove, true);
+                movePlayed = true;
+              }
             }
           }
         }
 
         // 3. In Strategy Mode: after strategy line is exhausted, switch to Stockfish AI
-        if (!movePlayed && gameMode === 'strategy' && bestMove) {
-          if (!deviated && selectedStrategy?.lines?.[0]) {
-            const history = game.history();
-            const lineMoves = selectedStrategy.lines[0].moves;
-            if (history.length >= lineMoves.length) {
-              setDeviated(true);
-              setDeviationMsg(`Strategy line completed! AI engine is now guiding the rest of the game.`);
-            }
-          }
-          makeMove(bestMove, true);
+        if (!movePlayed && gameMode === 'strategy' && bestMoves.length > 0) {
+          makeMove(bestMoves[0], true);
         }
       }, 1000);
 
       return () => clearTimeout(timer);
     }
-  }, [game, tick, userColor, view, selectedStrategy, bestMove, deviated, activeQuestion, quizFeedback, gameMode]);
+  }, [game, tick, userColor, view, selectedStrategy, bestMoves, deviated, gameMode]);
 
   // PeerJS setup and incoming connection helpers
   const startMultiplayer = () => {
@@ -590,98 +625,7 @@ function App() {
     forceUpdate();
   };
 
-  // Generate interactive educational questions based on CCTP priority choice in the current position
-  const triggerCurrentCctpQuiz = () => {
-    // If a quiz is already active or feedback is shown, don't override it
-    if (activeQuestion) return;
 
-    const currentCctp = calculateCCTP(game.fen());
-    
-    let correctIdx = 3; // Default is Plan
-    let category = 'Plan / Center';
-    let explanation = '';
-    
-    if (currentCctp.checks.length > 0) {
-      correctIdx = 0;
-      category = 'Checks';
-      const sample = currentCctp.checks[0].san;
-      explanation = `There is an active check available in this position (such as ${sample}). You should always analyze checks first to see if they force a tactical win or checkmate.`;
-    } else if (currentCctp.captures.length > 0) {
-      correctIdx = 1;
-      category = 'Captures';
-      const sample = currentCctp.captures[0].san;
-      explanation = `There are no checks, but there is a capture available (such as ${sample}). Material wins and piece trades are highly critical to look for next.`;
-    } else if (currentCctp.threats.length > 0) {
-      correctIdx = 2;
-      category = 'Threats';
-      const sample = currentCctp.threats[0].san;
-      explanation = `There are no checks or captures, but you have an active threat (such as ${sample}) to attack an undefended or valuable piece. Look for these to create pressure.`;
-    } else {
-      correctIdx = 3;
-      category = 'Plans / Center';
-      explanation = `There are no immediate checks, captures, or threats available. In this quiet position, focus on plans: control the center, develop inactive pieces, or initiate a pawn break.`;
-    }
-
-    const questionText = `It is your turn. According to CCTP priorities, what is the highest priority category you should look for in this position?`;
-    
-    const options = [
-      "Checks (C) - Attacks on the opponent King",
-      "Captures (C) - Material wins or piece trades",
-      "Threats (T) - Attacks on undefended or valuable pieces",
-      "Plans / Center (P) - Development, space, or center control"
-    ];
-
-    setActiveQuestion({
-      question: questionText,
-      options: options,
-      correctIdx: correctIdx,
-      explanation: explanation
-    });
-
-    speakText(questionText);
-  };
-
-  const handleAnswer = (idx) => {
-    const isCorrect = idx === activeQuestion.correctIdx;
-    const textStr = isCorrect 
-      ? `Correct! ${activeQuestion.explanation}` 
-      : `Incorrect. ${activeQuestion.explanation}`;
-
-    setQuizFeedback({
-      isCorrect: isCorrect,
-      text: textStr
-    });
-
-    speakText(textStr);
-
-    // Save metrics
-    const current = { ...metricsData };
-    current.stats.tutorTotalAnswers += 1;
-    if (isCorrect) {
-      current.stats.tutorCorrectAnswers += 1;
-    }
-    localStorage.setItem('chesstrainer_metrics', JSON.stringify(current));
-    setMetricsData(current);
-  };
-
-  const handleContinue = () => {
-    setActiveQuestion(null);
-    setQuizFeedback(null);
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-  };
-
-  // Automatically trigger CCTP search priority quiz at the start of the user's turn
-  useEffect(() => {
-    const noQuizModes = ['multiplayer', 'local-vs-local', 'simulation'];
-    if (view === 'trainer' && !noQuizModes.includes(gameMode) && quizEnabled && game.turn() === userColor && !game.isGameOver()) {
-      const timer = setTimeout(() => {
-        triggerCurrentCctpQuiz();
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [game, tick, userColor, view, quizEnabled, gameMode]);
 
   // Trigger confetti celebration when checkmate occurs in any mode
   useEffect(() => {
@@ -716,11 +660,6 @@ function App() {
 
   const handleResetData = () => {
     localStorage.removeItem('chesstrainer_metrics');
-    localStorage.removeItem('chesstrainer_tutor_enabled');
-    localStorage.removeItem('chesstrainer_dark_mode');
-    
-    // Reset state
-    setQuizEnabled(true);
     setDarkMode(false);
     setMetricsData({
       stats: { gamesPlayed: 0, movesMade: 0, tutorCorrectAnswers: 0, tutorTotalAnswers: 0 },
@@ -737,9 +676,41 @@ function App() {
     try {
       setIsAnimating(true);
       
-      // Clear active question/feedback as soon as user plays
-      setActiveQuestion(null);
-      setQuizFeedback(null);
+      // Assess move according to CCTP priorities
+      if (!isOpponent && gameMode !== 'multiplayer') {
+        const fenBefore = game.fen();
+        const currentCCTP = calculateCCTP(fenBefore);
+        
+        let highestPriority = 'Plans';
+        if (currentCCTP.checks.length > 0) highestPriority = 'Checks';
+        else if (currentCCTP.captures.length > 0) highestPriority = 'Captures';
+        else if (currentCCTP.threats.length > 0) highestPriority = 'Threats';
+
+        let playedCategory = 'Plans';
+        if (currentCCTP.checks.some(m => m.from === move.from && m.to === move.to)) {
+          playedCategory = 'Checks';
+        } else if (currentCCTP.captures.some(m => m.from === move.from && m.to === move.to)) {
+          playedCategory = 'Captures';
+        } else if (currentCCTP.threats.some(m => m.from === move.from && m.to === move.to)) {
+          playedCategory = 'Threats';
+        }
+
+        const priorityOrder = ['Checks', 'Captures', 'Threats', 'Plans'];
+        const playedIdx = priorityOrder.indexOf(playedCategory);
+        const targetIdx = priorityOrder.indexOf(highestPriority);
+
+        if (playedIdx <= targetIdx) {
+          setCctpFeedback({
+            type: 'success',
+            text: `🎯 CCTP Alignment: Great choice! You played a ${playedCategory} move, which aligns with or exceeds the highest priority option available (${highestPriority}).`
+          });
+        } else {
+          setCctpFeedback({
+            type: 'warning',
+            text: `💡 CCTP Advice: You played a ${playedCategory} move. However, ${highestPriority} were available. Try checking ${highestPriority} first!`
+          });
+        }
+      }
 
       // Check for deviation before executing
       if (!deviated && gameMode === 'strategy' && selectedStrategy && selectedStrategy.lines && selectedStrategy.lines[0]) {
@@ -749,7 +720,8 @@ function App() {
 
         if (expectedMoveSan && move.san !== expectedMoveSan) {
           setDeviated(true);
-          setDeviationMsg(`Deviation: You played ${move.san} instead of ${expectedMoveSan}. Live engine analysis is now active.`);
+          const whoDeviated = game.turn() === userColor ? "You" : "Opponent";
+          setDeviationMsg(`Deviation: ${whoDeviated} played ${move.san} instead of ${expectedMoveSan}. Live engine analysis is now active.`);
         }
       }
 
@@ -794,6 +766,40 @@ function App() {
     }
   };
 
+  const undoMove = () => {
+    if (game.history().length === 0) return;
+
+    // For learning modes, we typically want to undo both the AI's last move and our last move
+    // to return to our previous decision point.
+    if (gameMode !== 'multiplayer' && gameMode !== 'local-vs-local') {
+      game.undo(); // Undo the AI's move (or user's move if AI didn't reply yet)
+      // If after one undo it's the opponent's turn, it means we need to undo again to get back to the user's turn
+      if (game.turn() !== userColor && game.history().length > 0) {
+        game.undo();
+      }
+    } else {
+      game.undo(); // Just undo one move for local-vs-local
+    }
+
+    setTick(t => t + 1);
+    setSelectedMovePreview(null);
+    setHoveredMove(null);
+    
+    // Check if we reverted back onto the strategy path
+    if (gameMode === 'strategy' && selectedStrategy?.lines?.[0]) {
+      const lineMoves = selectedStrategy.lines[0].moves;
+      const history = game.history();
+      let isBackOnPath = true;
+      for (let i = 0; i < history.length; i++) {
+        if (history[i] !== lineMoves[i]) {
+          isBackOnPath = false;
+          break;
+        }
+      }
+      setDeviated(!isBackOnPath);
+    }
+  };
+
   // Click-to-move & highlighted move options
   const getMoveOptions = (square) => {
     const moves = game.moves({
@@ -819,8 +825,8 @@ function App() {
   };
 
   const onSquareClick = (square) => {
-    // If a move transition or quiz modal is active, ignore clicks
-    if (isAnimating || activeQuestion) {
+    // If a move transition is active, ignore clicks
+    if (isAnimating) {
       return;
     }
 
@@ -847,7 +853,15 @@ function App() {
       const foundMove = moves.find((m) => m.to === square);
 
       if (foundMove) {
-        makeMove(foundMove);
+        if (requireTapToConfirm) {
+          if (selectedMovePreview && selectedMovePreview.from === foundMove.from && selectedMovePreview.to === foundMove.to) {
+            makeMove(foundMove);
+          } else {
+            handleTapMove(foundMove);
+          }
+        } else {
+          makeMove(foundMove);
+        }
       } else {
         const piece = game.get(square);
         if (piece && piece.color === activeColor) {
@@ -863,7 +877,7 @@ function App() {
 
   // Compute preview for opponent replies when hovering over a move (or tapping on touch)
   const handleMouseEnterMove = (move) => {
-    if (isAnimating || activeQuestion) return;
+    if (isAnimating) return;
     setHoveredMove(move);
     setSelectedMovePreview(move);
     
@@ -888,7 +902,7 @@ function App() {
 
   // Tap handler for touch interfaces - toggle preview on/off
   const handleTapMove = (move) => {
-    if (isAnimating || activeQuestion) return;
+    if (isAnimating) return;
     if (selectedMovePreview && selectedMovePreview.from === move.from && selectedMovePreview.to === move.to) {
       // Tapping the same move again clears the preview
       setSelectedMovePreview(null);
@@ -901,7 +915,7 @@ function App() {
 
   // Mouse hover trigger directly on chessboard squares (to update right-pane blunder check)
   const onSquareMouseEnter = (square) => {
-    if (isAnimating || activeQuestion) return;
+    if (isAnimating) return;
     if (selectedSquare) {
       const moves = game.moves({
         square: selectedSquare,
@@ -976,20 +990,16 @@ function App() {
 
   // Compute arrows for chessboard
   const getArrows = () => {
-    // Hide arrows completely in P2P multiplayer match
-    if (gameMode === 'multiplayer') {
-      return [];
-    }
-
     const arrows = [];
+    if (gameMode === 'local-vs-local' || gameMode === 'multiplayer') return arrows;
     
     if (hoveredMove) {
       arrows.push([hoveredMove.from, hoveredMove.to, '#eab308']); // Yellow for hover
       return arrows;
     }
 
-    if (bestMove && game.turn() === userColor) {
-      arrows.push([bestMove.from, bestMove.to, '#10b981']); // Green for Stockfish best move
+    if (bestMoves.length > 0 && game.turn() === userColor) {
+      arrows.push([bestMoves[0].from, bestMoves[0].to, '#10b981']); // Green for Stockfish best move
     }
 
     if (gameMode === 'strategy' && selectedStrategy && selectedStrategy.lines && selectedStrategy.lines[0]) {
@@ -1011,7 +1021,7 @@ function App() {
         const nextMoveSan = lineMoves[history.length];
         try {
           const nextMove = temp.move(nextMoveSan);
-          if (!bestMove || bestMove.from !== nextMove.from || bestMove.to !== nextMove.to) {
+          if (bestMoves.length === 0 || bestMoves[0].from !== nextMove.from || bestMoves[0].to !== nextMove.to) {
             arrows.push([nextMove.from, nextMove.to, '#3b82f6']); // Blue for strategy line
           }
         } catch (e) {}
@@ -1110,10 +1120,13 @@ function App() {
   
   if (game.turn() === userColor) {
     // Show AI best move only if: not in strategy mode OR strategy is fully taught
-    if (bestMove && (gameMode !== 'strategy' || strategyTaught || deviated)) {
-      recommendedMoves.push({
-        ...bestMove,
-        type: 'best'
+    if (bestMoves.length > 0 && (gameMode !== 'strategy' || strategyTaught || deviated)) {
+      bestMoves.forEach((move, index) => {
+        recommendedMoves.push({
+          ...move,
+          type: 'best',
+          rank: index + 1
+        });
       });
     }
 
@@ -1157,6 +1170,95 @@ function App() {
   const filteredThreats = cctpData.threats.filter(m => !isRecommended(m));
   const filteredPlans = cctpData.plans.filter(m => !isRecommended(m));
 
+  const renderCctpTrainingHUD = () => {
+    if (gameMode === 'multiplayer' || game.isGameOver()) return null;
+
+    // Determine target priority
+    let highestPriority = 'Plans (P)';
+    let priorityColor = 'text-blue-400';
+    let priorityBg = 'bg-blue-500/10 border border-blue-500/20';
+    let priorityHint = 'No immediate threats. Develop pieces, control center, or push pawns.';
+    
+    if (cctpData.checks.length > 0) {
+      highestPriority = 'Checks (C)';
+      priorityColor = 'text-red-400';
+      priorityBg = 'bg-red-500/10 border border-red-500/20';
+      priorityHint = 'Active check available! Inspect if it forces checkmate or win.';
+    } else if (cctpData.captures.length > 0) {
+      highestPriority = 'Captures (C)';
+      priorityColor = 'text-amber-400';
+      priorityBg = 'bg-amber-500/10 border border-amber-500/20';
+      priorityHint = 'Captures available. Analyze material gains or equal exchanges.';
+    } else if (cctpData.threats.length > 0) {
+      highestPriority = 'Threats (T)';
+      priorityColor = 'text-purple-400';
+      priorityBg = 'bg-purple-500/10 border border-purple-500/20';
+      priorityHint = 'Attack undefended pieces or target higher-value targets.';
+    }
+
+    const isCctpVisible = gameMode !== 'multiplayer' && !game.isGameOver();
+
+    return (
+      <div className={`mt-2 bg-slate-900/60 backdrop-blur-md border border-slate-700/50 p-2.5 rounded-xl shadow-lg select-none w-full ${
+        isCctpVisible 
+          ? 'max-w-[min(85vw,calc(100vh-330px))] sm:max-w-[min(85vw,50vh)]' 
+          : 'max-w-[min(85vw,calc(100vh-200px))] sm:max-w-[min(85vw,65vh)]'
+      }`}>
+        {/* Row 1: Header Info */}
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">🧠 CCTP HUD</span>
+            <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${priorityBg} ${priorityColor}`}>
+              Priority: {highestPriority}
+            </span>
+          </div>
+          <button
+            onClick={() => setShowCctpHelp(true)}
+            className="p-0.5 px-1.5 text-[9px] bg-slate-800 hover:bg-slate-750 border border-white/10 rounded text-slate-300 hover:text-slate-100 transition-all cursor-pointer font-semibold"
+          >
+            ❓ Help
+          </button>
+        </div>
+
+        {/* Row 2: Single-sentence guidance hint */}
+        <p className="text-[10px] text-slate-400 leading-normal mb-2 italic">
+          💡 {priorityHint}
+        </p>
+
+        {/* Row 3: Four Horizontal Pills */}
+        <div className="grid grid-cols-4 gap-1.5 text-[9px] font-semibold">
+          <div className={`p-1.5 rounded flex items-center justify-between ${cctpData.checks.length > 0 ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-slate-955/40 text-slate-500 border border-transparent'}`}>
+            <span>🔍 Checks</span>
+            <span className="font-bold">{cctpData.checks.length > 0 ? `(${cctpData.checks.length})` : '✕'}</span>
+          </div>
+          <div className={`p-1.5 rounded flex items-center justify-between ${cctpData.captures.length > 0 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-slate-955/40 text-slate-500 border border-transparent'}`}>
+            <span>⚔️ Captures</span>
+            <span className="font-bold">{cctpData.captures.length > 0 ? `(${cctpData.captures.length})` : '✕'}</span>
+          </div>
+          <div className={`p-1.5 rounded flex items-center justify-between ${cctpData.threats.length > 0 ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-slate-955/40 text-slate-500 border border-transparent'}`}>
+            <span>🎯 Threats</span>
+            <span className="font-bold">{cctpData.threats.length > 0 ? `(${cctpData.threats.length})` : '✕'}</span>
+          </div>
+          <div className={`p-1.5 rounded flex items-center justify-between ${cctpData.plans.length > 0 ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-slate-955/40 text-slate-500 border border-transparent'}`}>
+            <span>♟️ Plans</span>
+            <span className="font-bold">{cctpData.plans.length > 0 ? `(${cctpData.plans.length})` : '✕'}</span>
+          </div>
+        </div>
+
+        {/* Row 4: Move Feedback Alert */}
+        {cctpFeedback && (
+          <div className={`mt-2 p-1.5 sm:p-2 rounded border text-[10px] leading-snug animate-fade-in ${
+            cctpFeedback.type === 'success' 
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
+              : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+          }`}>
+            {cctpFeedback.text}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderRecommendedSection = () => {
     if (recommendedMoves.length === 0) return null;
     const pieceNames = { p: 'Pawn', n: 'Knight', b: 'Bishop', r: 'Rook', q: 'Queen', k: 'King' };
@@ -1168,22 +1270,17 @@ function App() {
         </h3>
         <div className="flex flex-col gap-2">
           {recommendedMoves.map((move, idx) => {
-            let friendlyText = '';
-            if (move.san === 'O-O') {
-              friendlyText = 'Castle Kingside';
-            } else if (move.san === 'O-O-O') {
-              friendlyText = 'Castle Queenside';
-            } else if (move.captured) {
-              friendlyText = `Capture ${pieceNames[move.captured] || 'piece'} on ${move.to}`;
-            } else {
-              friendlyText = `Move ${pieceNames[move.piece] || 'Pawn'} to ${move.to}`;
-            }
+            const friendlyText = explainMove(game.fen(), move, userColor);
 
             let badgeText = '';
             let badgeBg = '';
             if (move.type === 'best') {
-              badgeText = 'Best';
-              badgeBg = 'bg-emerald-500 text-slate-900';
+              badgeText = move.rank ? `Best #${move.rank}` : 'Best';
+              badgeBg = move.rank === 1 
+                ? 'bg-emerald-500 text-slate-900 font-extrabold' 
+                : move.rank === 2 
+                ? 'bg-teal-600 text-slate-100 font-bold' 
+                : 'bg-slate-700 text-slate-200';
             } else if (move.type === 'strategy') {
               badgeText = 'Strategy';
               badgeBg = 'bg-blue-600 text-white';
@@ -1198,11 +1295,18 @@ function App() {
               <button
                 key={idx}
                 disabled={isAnimating}
-                onClick={() => makeMove(move)}
+                onClick={() => {
+                  const isTouch = requireTapToConfirm;
+                  if (isTouch && !isSelected) {
+                    handleTapMove(move);
+                  } else {
+                    makeMove(move);
+                  }
+                }}
                 onMouseEnter={() => handleMouseEnterMove(move)}
                 onMouseLeave={handleMouseLeaveMove}
                 className={`p-2 px-3 rounded-lg text-left border transition-all flex justify-between items-center bg-slate-800 text-slate-100 cursor-pointer ${
-                  isSelected ? 'border-emerald-400/60 ring-1 ring-emerald-500/30' : 'border-white/5 hover:border-emerald-500/40'
+                  isSelected ? 'border-emerald-400/60 ring-1 ring-emerald-500/30 bg-slate-750' : 'border-white/5 hover:border-emerald-500/40'
                 }`}
               >
                 <div className="flex flex-col">
@@ -1210,16 +1314,12 @@ function App() {
                   <span className="text-[10px] text-slate-400 font-mono mt-0.5">{move.from} → {move.to} ({move.san})</span>
                 </div>
                 <div className="flex items-center gap-1.5 ml-2 shrink-0">
-                  {/* Touch preview button */}
-                  <button
-                    onPointerDown={(e) => { e.stopPropagation(); handleTapMove(move); }}
-                    className="lg:hidden p-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-[9px] border border-white/10 cursor-pointer"
-                    title="Preview opponent reply"
-                  >
-                    {isSelected ? '✕' : '👁'}
-                  </button>
-                  <span className={`text-[9px] px-2 py-0.5 rounded uppercase font-extrabold ${badgeBg}`}>
-                    {badgeText}
+                  <span className={`text-[9px] px-2 py-0.5 rounded uppercase font-extrabold transition-colors ${
+                    isSelected && requireTapToConfirm 
+                      ? 'bg-emerald-500 text-slate-900 animate-pulse' 
+                      : badgeBg
+                  }`}>
+                    {isSelected && requireTapToConfirm ? 'Tap to Play ➔' : badgeText}
                   </span>
                 </div>
               </button>
@@ -1230,7 +1330,7 @@ function App() {
     );
   };
 
-  const renderMoveList = (title, moves, colorClass) => {
+  const renderMoveList = (title, moves, colorClass, isInteractive = true) => {
     if (moves.length === 0) return null;
     const pieceNames = { p: 'Pawn', n: 'Knight', b: 'Bishop', r: 'Rook', q: 'Queen', k: 'King' };
 
@@ -1239,45 +1339,48 @@ function App() {
         <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${colorClass}`}>{title}</h3>
         <div className="flex flex-col gap-2">
           {moves.map((move, idx) => {
-            let friendlyText = '';
-            if (move.san === 'O-O') {
-              friendlyText = 'Castle Kingside';
-            } else if (move.san === 'O-O-O') {
-              friendlyText = 'Castle Queenside';
-            } else if (move.captured) {
-              friendlyText = `Capture ${pieceNames[move.captured] || 'piece'} on ${move.to}`;
-            } else {
-              friendlyText = `Move ${pieceNames[move.piece] || 'Pawn'} to ${move.to}`;
-            }
+            const friendlyText = explainMove(game.fen(), move, userColor);
 
-            const isSelected = selectedMovePreview?.from === move.from && selectedMovePreview?.to === move.to;
+            const isSelected = isInteractive && selectedMovePreview?.from === move.from && selectedMovePreview?.to === move.to;
+
+            const Wrapper = isInteractive ? 'button' : 'div';
+            const interactiveProps = isInteractive ? {
+              onClick: () => {
+                const isTouch = requireTapToConfirm;
+                if (isTouch && !isSelected) {
+                  handleTapMove(move);
+                } else {
+                  makeMove(move);
+                }
+              },
+              onMouseEnter: () => handleMouseEnterMove(move),
+              onMouseLeave: handleMouseLeaveMove,
+            } : {};
 
             return (
-              <button
+              <Wrapper
                 key={idx}
                 disabled={isAnimating}
-                onClick={() => makeMove(move)}
-                onMouseEnter={() => handleMouseEnterMove(move)}
-                onMouseLeave={handleMouseLeaveMove}
+                {...interactiveProps}
                 className={`p-2 px-3 rounded text-left border transition-all flex justify-between items-center bg-slate-800 text-slate-100 ${
-                  isAnimating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                  isInteractive 
+                    ? (isAnimating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-slate-600') 
+                    : ''
                 } ${
-                  isSelected ? 'border-blue-400/60 ring-1 ring-blue-500/20' : 'border-white/5 hover:border-slate-600'
+                  isSelected ? 'border-blue-400/60 ring-1 ring-blue-500/20 bg-slate-750' : 'border-white/5'
                 }`}
               >
                 <div className="flex flex-col flex-1">
                   <span className="font-semibold text-xs leading-normal">{friendlyText}</span>
                   <span className="text-[10px] text-slate-400 font-mono mt-0.5">{move.from} → {move.to} ({move.san})</span>
                 </div>
-                {/* Touch preview button (visible on tablet/mobile, hidden on desktop hover) */}
-                <button
-                  onPointerDown={(e) => { e.stopPropagation(); handleTapMove(move); }}
-                  className="lg:hidden p-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-[9px] border border-white/10 ml-2 cursor-pointer shrink-0"
-                  title="Preview opponent reply"
-                >
-                  {isSelected ? '✕' : '👁'}
-                </button>
-              </button>
+                {/* Touch play prompt */}
+                {isSelected && requireTapToConfirm && (
+                  <span className="text-[9px] px-2 py-0.5 rounded uppercase font-extrabold bg-blue-500 text-white animate-pulse ml-2 shrink-0">
+                    Tap to Play ➔
+                  </span>
+                )}
+              </Wrapper>
             );
           })}
         </div>
@@ -1518,7 +1621,8 @@ function App() {
           {/* Banner header */}
           <div className="text-center mt-6 sm:mt-10 mb-6 sm:mb-12 max-w-2xl px-4 shrink-0">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800 bg-blue-100 dark:bg-blue-900/50 mb-3 text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-widest select-none">
-              👑 Play & learn chess
+              <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="Chess Logo" className="w-3.5 h-3.5 shrink-0" />
+              Play & learn chess
             </div>
             {/* Solid text color heading instead of gradient */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-100 mb-3 leading-tight font-sans select-none">
@@ -1529,103 +1633,110 @@ function App() {
             </p>
           </div>
 
-          {/* Feature Cards Grid */}
-          <div className="w-full max-w-5xl px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 shrink-0">
-            {/* Card 1: AI Coach */}
-            <div 
-              onClick={startAICoachMode}
-              className="glass-panel p-6 border-l-4 border-l-emerald-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
-            >
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-555/10 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mb-4 font-bold">
-                  🤖
-                </div>
-                <h3 className="text-xl font-bold text-slate-100 group-hover:text-emerald-500 transition-colors">Vs AI Coach</h3>
-                <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
-                  Play a full game from the initial position. Get instant hints (Checks, Captures, Threats, Plans) and tutor questions.
-                </p>
-              </div>
-              <span className="text-xs font-semibold text-emerald-550 dark:text-emerald-400 mt-6 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                Start Match ➔
-              </span>
-            </div>
-
-            {/* Card 2: Strategy Openings */}
+          {/* Main Focus: Strategy Library Hero Card */}
+          <div className="w-full max-w-5xl px-4 mb-6 shrink-0">
             <div 
               onClick={() => {
                 setGameMode('strategy');
                 setCategoryFilter('all');
                 setSearchQuery('');
+                setTimeout(() => {
+                  document.getElementById('strategies-section')?.scrollIntoView({ behavior: 'smooth' });
+                }, 50);
               }}
-              className="glass-panel p-6 border-l-4 border-l-blue-500 cursor-default flex flex-col justify-between"
+              className="glass-panel p-6 sm:p-8 border-l-4 border-l-blue-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 group shadow-2xl"
             >
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-blue-550/10 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl mb-4 font-bold">
-                  📖
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-550/10 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl font-bold">
+                    📖
+                  </div>
+                  <h2 className="text-2xl font-bold text-slate-100 group-hover:text-blue-400 transition-colors">Strategy Library</h2>
                 </div>
-                <h3 className="text-xl font-bold text-slate-100">Strategy Library</h3>
-                <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
-                  Learn 100+ standard openings (Ruy Lopez, Sicilian), midgames, and endgames step-by-step with real-time guides.
+                <p className="text-sm text-slate-300 leading-relaxed max-w-2xl">
+                  Learn 100+ standard openings (Ruy Lopez, Sicilian), midgames, and endgames step-by-step with real-time guides. Master exact move paths and understand the logic behind them.
                 </p>
               </div>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-550/20 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 w-max mt-6">
-                Explore Below
+              <span className="text-xs uppercase font-bold tracking-wider px-3 py-1.5 rounded-lg bg-blue-550/20 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shrink-0 group-hover:bg-blue-550/30 dark:group-hover:bg-blue-500/20 transition-all select-none">
+                Explore Openings & Strategies Below ➔
+              </span>
+            </div>
+          </div>
+
+          {/* Other Game Modes Row (Single Line on Desktop) */}
+          <div className="w-full max-w-5xl px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 shrink-0">
+            {/* Card 1: AI Coach */}
+            <div 
+              onClick={startAICoachMode}
+              className="glass-panel p-4.5 border-l-4 border-l-emerald-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group"
+            >
+              <div>
+                <div className="w-8 h-8 rounded-lg bg-emerald-555/10 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-md mb-3 font-bold">
+                  🤖
+                </div>
+                <h3 className="text-base font-bold text-slate-100 group-hover:text-emerald-500 transition-colors">Vs AI Coach</h3>
+                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                  Play a full game from the start with live move categories coaching.
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-emerald-550 dark:text-emerald-400 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Start Match ➔
               </span>
             </div>
 
-            {/* Card 3: Friend Duel */}
+            {/* Card 2: Friend Duel */}
             <div 
               onClick={startMultiplayer}
-              className="glass-panel p-6 border-l-4 border-l-violet-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
+              className="glass-panel p-4.5 border-l-4 border-l-violet-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-violet-555/10 dark:bg-violet-500/10 text-violet-655 dark:text-violet-400 flex items-center justify-center text-xl mb-4 font-bold">
+                <div className="w-8 h-8 rounded-lg bg-violet-555/10 dark:bg-violet-500/10 text-violet-655 dark:text-violet-400 flex items-center justify-center text-md mb-3 font-bold">
                   👥
                 </div>
-                <h3 className="text-xl font-bold text-slate-100 group-hover:text-violet-400 transition-colors">Friend Duel (P2P)</h3>
-                <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
-                  Connect peer-to-peer with another player using a simple ID. Play real-time with a built-in chat board.
+                <h3 className="text-base font-bold text-slate-100 group-hover:text-violet-400 transition-colors">Friend Duel</h3>
+                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                  Connect peer-to-peer (P2P) with a friend for real-time play and chat.
                 </p>
               </div>
-              <span className="text-xs font-semibold text-violet-600 dark:text-violet-400 mt-6 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <span className="text-xs font-semibold text-violet-600 dark:text-violet-400 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                 Join Lobby ➔
               </span>
             </div>
 
-            {/* Card 4: Local vs Local */}
+            {/* Card 3: Local vs Local */}
             <div 
               onClick={startLocalVsLocal}
-              className="glass-panel p-6 border-l-4 border-l-orange-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
+              className="glass-panel p-4.5 border-l-4 border-l-orange-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center text-xl mb-4 font-bold">
+                <div className="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center text-md mb-3 font-bold">
                   🏠
                 </div>
-                <h3 className="text-xl font-bold text-slate-100 group-hover:text-orange-400 transition-colors">Local vs Local</h3>
-                <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
-                  Two players take turns on the same device. No AI recommendations or tutor hints — pure chess.
+                <h3 className="text-base font-bold text-slate-100 group-hover:text-orange-400 transition-colors">Local vs Local</h3>
+                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                  Two players take turns on the same device. Pure, unassisted chess.
                 </p>
               </div>
-              <span className="text-xs font-semibold text-orange-500 dark:text-orange-400 mt-6 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <span className="text-xs font-semibold text-orange-500 dark:text-orange-400 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                 Play Now ➔
               </span>
             </div>
 
-            {/* Card 5: Simulation */}
+            {/* Card 4: Simulation */}
             <div 
               onClick={startSimulation}
-              className="glass-panel p-6 border-l-4 border-l-pink-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group"
+              className="glass-panel p-4.5 border-l-4 border-l-pink-500 cursor-pointer hover:bg-slate-900/80 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-500 flex items-center justify-center text-xl mb-4 font-bold">
+                <div className="w-8 h-8 rounded-lg bg-pink-500/10 text-pink-500 flex items-center justify-center text-md mb-3 font-bold">
                   🎭
                 </div>
-                <h3 className="text-xl font-bold text-slate-100 group-hover:text-pink-400 transition-colors">Simulation</h3>
-                <p className="text-xs text-slate-555 dark:text-slate-400 mt-2 leading-relaxed">
-                  Choose your side (White or Black), then play a local match against yourself. No recommendations — pure simulation.
+                <h3 className="text-base font-bold text-slate-100 group-hover:text-pink-400 transition-colors">Simulation</h3>
+                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                  Choose a side and play out both positions to anticipate opponent replies.
                 </p>
               </div>
-              <span className="text-xs font-semibold text-pink-500 dark:text-pink-400 mt-6 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              <span className="text-xs font-semibold text-pink-500 dark:text-pink-400 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                 Choose Side ➔
               </span>
             </div>
@@ -1703,7 +1814,7 @@ function App() {
 
           {/* Strategy Directory Panel */}
           {gameMode === 'strategy' && (
-            <div className="glass-panel w-full max-w-4xl p-4 sm:p-6 flex flex-col max-h-[80vh] mx-auto shadow-2xl">
+            <div id="strategies-section" className="glass-panel w-full max-w-4xl p-4 sm:p-6 flex flex-col max-h-[80vh] mx-auto shadow-2xl">
               {/* Search Box */}
               <input
                 type="text"
@@ -1713,48 +1824,62 @@ function App() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
 
-              {/* Filters Row */}
+              {/* Filters & Sort Row */}
               <div className="flex flex-col gap-2 mb-3 shrink-0">
-                <div className="flex gap-1 bg-slate-950/40 p-1 rounded-xl border border-white/5">
-                  {['all', 'openings', 'midgames', 'endgames'].map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => setCategoryFilter(cat)}
-                      className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                        categoryFilter === cat
-                          ? 'bg-blue-600 text-slate-100 font-bold'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      {cat === 'all' ? 'All' : cat === 'midgames' ? 'Mid' : cat === 'endgames' ? 'End' : 'Open'}
-                    </button>
-                  ))}
-                </div>
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-1 gap-1 bg-slate-950/40 p-1 rounded-xl border border-white/5 min-w-[200px]">
+                    {['all', 'openings', 'midgames', 'endgames'].map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setCategoryFilter(cat)}
+                        className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                          categoryFilter === cat
+                            ? 'bg-blue-600 text-slate-100 font-bold'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        {cat === 'all' ? 'All' : cat === 'midgames' ? 'Mid' : cat === 'endgames' ? 'End' : 'Open'}
+                      </button>
+                    ))}
+                  </div>
 
-                <div className="flex gap-1 bg-slate-955/40 p-1 rounded-xl border border-white/5">
-                  {['all', 'white', 'black'].map(side => (
-                    <button
-                      key={side}
-                      onClick={() => setSideFilter(side)}
-                      className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                        sideFilter === side
-                          ? 'bg-emerald-600 text-slate-100 font-bold'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      {side === 'all' ? 'All' : side === 'white' ? 'White ⚪' : 'Black ⚫'}
-                    </button>
-                  ))}
+                  <div className="flex flex-1 gap-1 bg-slate-955/40 p-1 rounded-xl border border-white/5 min-w-[200px]">
+                    {['all', 'white', 'black'].map(side => (
+                      <button
+                        key={side}
+                        onClick={() => setSideFilter(side)}
+                        className={`flex-1 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                          sideFilter === side
+                            ? 'bg-emerald-600 text-slate-100 font-bold'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        {side === 'all' ? 'All' : side === 'white' ? 'White ⚪' : 'Black ⚫'}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Sort Dropdown */}
+                  <select 
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className="p-2 rounded-xl bg-slate-800/80 border border-white/5 text-slate-300 text-xs font-semibold focus:outline-none focus:border-blue-500 cursor-pointer min-w-[140px]"
+                  >
+                    <option value="none">Sort: Default</option>
+                    <option value="popularity-desc">Popularity: High to Low</option>
+                    <option value="popularity-asc">Popularity: Low to High</option>
+                    <option value="complexity-desc">Complexity: High to Low</option>
+                    <option value="complexity-asc">Complexity: Low to High</option>
+                  </select>
                 </div>
               </div>
 
               {/* Strategies Grid List */}
               <div className="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-3 pr-1 scrollbar-thin">
                 {filteredStrategies.map(item => {
-                  const tempCctp = calculateCCTP(item.startingFen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-                  const checkCount = tempCctp.checks.length;
-                  const captureCount = tempCctp.captures.length;
-                  const threatCount = tempCctp.threats.length;
+                  const checkCount = item.checkCount;
+                  const captureCount = item.captureCount;
+                  const threatCount = item.threatCount;
 
                   return (
                     <div
@@ -1777,6 +1902,7 @@ function App() {
                         </div>
                         <h3 className="text-md font-bold text-blue-500 dark:text-blue-450 group-hover:text-blue-400 transition-colors leading-tight">{item.name}</h3>
                         <p className="text-slate-500 dark:text-slate-300 text-xs mt-1.5 line-clamp-2 leading-relaxed">{item.description}</p>
+                        <StrategyMetrics popularity={item.popularity} complexity={item.complexity} />
                         
                         {/* Interactive Checks, Captures, threats counts displayed directly in strategy directory */}
                         <div className="flex flex-wrap gap-2 mt-3 select-none">
@@ -1956,6 +2082,7 @@ function App() {
                         <div>
                           <h4 className="text-lg font-bold text-blue-500 group-hover:text-blue-400 transition-colors leading-tight">{item.name}</h4>
                           <p className="text-slate-555 dark:text-slate-300 text-xs mt-1 leading-relaxed">{item.description}</p>
+                          <StrategyMetrics popularity={item.popularity} complexity={item.complexity} />
                         </div>
                         <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-600 text-slate-100 shrink-0 ml-4">
                           Recommended
@@ -1987,6 +2114,7 @@ function App() {
                     >
                       <h3 className="text-xl font-bold text-emerald-500 dark:text-emerald-400 group-hover:text-emerald-450 transition-colors">{item.name}</h3>
                       <p className="text-slate-555 dark:text-slate-300 text-sm mt-1">{item.description}</p>
+                      <StrategyMetrics popularity={item.popularity} complexity={item.complexity} />
                     </div>
                   ))}
                 </div>
@@ -2074,6 +2202,7 @@ function App() {
                         <div>
                           <h4 className="text-lg font-bold text-blue-500 group-hover:text-blue-400 transition-colors leading-tight">{item.name}</h4>
                           <p className="text-slate-550 dark:text-slate-300 text-xs mt-1 leading-relaxed">{item.description}</p>
+                          <StrategyMetrics popularity={item.popularity} complexity={item.complexity} />
                         </div>
                         <span className="text-[9px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded bg-emerald-600 text-slate-100 shrink-0 ml-4">
                           Recommended
@@ -2104,6 +2233,7 @@ function App() {
                       >
                         <h4 className="text-lg font-bold text-slate-400 group-hover:text-slate-300 transition-colors leading-tight">{item.name}</h4>
                         <p className="text-slate-500 text-xs mt-1 leading-relaxed">{item.description}</p>
+                        <StrategyMetrics popularity={item.popularity} complexity={item.complexity} />
                       </div>
                     ))}
                   </div>
@@ -2254,17 +2384,23 @@ function App() {
           className="w-10 h-10 rounded-full border border-slate-700/50 shadow-sm"
         />
         <div className="flex flex-col">
-          <span className="text-sm font-bold text-slate-100 leading-none font-sans">You (Player)</span>
+          <span className="text-sm font-bold text-slate-100 leading-none font-sans">
+            {gameMode === 'local-vs-local' ? 'Local Match' : 'You (Player)'}
+          </span>
           <span className="text-[10px] text-slate-400 font-semibold mt-1 flex items-center gap-1">
-            <span className={`w-1.5 h-1.5 rounded-full ${game.turn() === userColor && !game.isGameOver() ? 'bg-emerald-500 animate-ping' : 'bg-slate-500'}`}></span>
-            {game.turn() === userColor && !game.isGameOver() ? 'Your Turn' : 'Waiting...'} ({userColor === 'w' ? 'White ⚪' : 'Black ⚫'})
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+            {game.turn() === 'w' ? "White's Turn ⚪" : "Black's Turn ⚫"}
           </span>
         </div>
       </div>
       
-      {/* Dynamic Content: Options or Move History log */}
-      {gameMode === 'multiplayer' ? (
-        renderMoveHistory()
+      {/* Dynamic Content: Options or Mode Explanation Card */}
+      {gameMode === 'multiplayer' || gameMode === 'local-vs-local' ? (
+        <div className="p-4 bg-slate-900/60 border border-white/5 rounded-xl text-center text-slate-400 text-xs italic select-none">
+          {gameMode === 'local-vs-local' 
+            ? "Pass and play with a friend on the same screen. No chess engine suggestions are active." 
+            : "Playing an online P2P duel. No Suggestion arrows or CCTP assist allowed."}
+        </div>
       ) : (
         <div className="flex-1 flex flex-col min-h-0">
           {gameMode === 'strategy' && deviated && (
@@ -2274,8 +2410,15 @@ function App() {
             </div>
           )}
 
-          {/* Strategy Roadmap Tree - shown above move options when in strategy mode */}
-          {gameMode === 'strategy' && !deviated && renderStrategyTree()}
+          {gameMode === 'strategy' && !deviated && strategyTaught && (
+            <div className="p-3 mb-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-400 animate-fade-in">
+              <strong className="block text-emerald-400 font-bold mb-1">🎯 STRATEGY COMPLETED</strong>
+              Strategy line successfully completed! The AI engine is now guiding the rest of the game.
+            </div>
+          )}
+
+          {/* Strategy Roadmap Tree - shown above move options when in strategy mode (hidden upon completion) */}
+          {gameMode === 'strategy' && !deviated && !strategyTaught && renderStrategyTree()}
 
           <p className="text-xs text-slate-450 dark:text-slate-400 mb-4 select-none leading-relaxed">
             {game.turn() === userColor 
@@ -2299,6 +2442,16 @@ function App() {
                   </>
                 )}
               </>
+            ) : gameMode === 'simulation' ? (
+              <>
+                <p className="text-xs text-amber-455 bg-amber-500/5 border border-amber-500/10 p-2 rounded-lg mb-3">
+                  ♟️ Opponent's Turn: Play a move for the opponent to simulate their response.
+                </p>
+                {renderMoveList("Checks (C)", filteredChecks, "text-red-400")}
+                {renderMoveList("Captures (C)", filteredCaptures, "text-amber-405 dark:text-amber-400")}
+                {renderMoveList("Threats (T)", filteredThreats, "text-purple-400")}
+                {renderMoveList("Plans / Center (P)", filteredPlans, "text-blue-400")}
+              </>
             ) : (
               <div className="p-4 bg-slate-800/50 rounded-xl border border-white/5 text-center text-slate-400 italic text-sm select-none">
                 Thinking move for opponent...
@@ -2321,18 +2474,27 @@ function App() {
         />
         <div className="flex flex-col">
           <span className="text-sm font-bold text-slate-100 leading-none font-sans">
-            {gameMode === 'strategy' ? (selectedStrategy?.name || "Strategy Bot") : gameMode === 'ai-coach' ? "AI Coach" : "Friend Opponent"}
+            {gameMode === 'strategy' ? (selectedStrategy?.name || "Strategy Bot") : gameMode === 'ai-coach' ? "AI Coach" : "Opponent"}
           </span>
           <span className="text-[10px] text-slate-400 font-semibold mt-1 flex items-center gap-1">
             <span className={`w-1.5 h-1.5 rounded-full ${game.turn() !== userColor && !game.isGameOver() ? 'bg-amber-400 animate-ping' : 'bg-emerald-500'}`}></span>
-            {game.turn() !== userColor && !game.isGameOver() ? 'Thinking...' : 'Online'} ({userColor === 'w' ? 'Black ⚫' : 'White ⚪'})
+            {game.turn() !== userColor && !game.isGameOver() ? 'Thinking...' : 'Online'}
           </span>
         </div>
       </div>
 
-      {/* Dynamic Content: Blunder Check Options or P2P chat log */}
+      {/* Dynamic Content: Blunder Check Options, P2P Chat + Move History, or Local vs Local Move History */}
       {gameMode === 'multiplayer' ? (
-        renderMultiplayerChat()
+        <div className="flex-1 flex flex-col min-h-0 gap-4">
+          <div className="h-[40%] min-h-[140px] flex flex-col min-h-0 border-b border-white/10 pb-4">
+            {renderMoveHistory()}
+          </div>
+          <div className="flex-1 flex flex-col min-h-0">
+            {renderMultiplayerChat()}
+          </div>
+        </div>
+      ) : gameMode === 'local-vs-local' ? (
+        renderMoveHistory()
       ) : (
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 overflow-y-auto pr-1">
@@ -2341,10 +2503,10 @@ function App() {
                 <p className="text-xs text-rose-455 dark:text-rose-400 mb-4 bg-rose-950/30 border border-rose-500/20 rounded p-2">
                   Previewing replies if you play <strong className="underline">{hoveredOpponentCCTP.moveSan}</strong>:
                 </p>
-                {renderMoveList("Opponent Checks (C)", hoveredOpponentCCTP.checks, "text-red-400")}
-                {renderMoveList("Opponent Captures (C)", hoveredOpponentCCTP.captures, "text-amber-405 dark:text-amber-400")}
-                {renderMoveList("Opponent Threats (T)", hoveredOpponentCCTP.threats, "text-purple-400")}
-                {renderMoveList("Opponent Plans (P)", hoveredOpponentCCTP.plans, "text-blue-400")}
+                {renderMoveList("Opponent Checks (C)", hoveredOpponentCCTP.checks, "text-red-400", false)}
+                {renderMoveList("Opponent Captures (C)", hoveredOpponentCCTP.captures, "text-amber-405 dark:text-amber-400", false)}
+                {renderMoveList("Opponent Threats (T)", hoveredOpponentCCTP.threats, "text-purple-400", false)}
+                {renderMoveList("Opponent Plans (P)", hoveredOpponentCCTP.plans, "text-blue-400", false)}
               </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-white/5 rounded-xl select-none">
@@ -2353,8 +2515,8 @@ function App() {
                 </div>
                 <p className="text-sm text-slate-400 font-bold">Blunder Check</p>
                 <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                  <span className="hidden lg:inline">Hover over a move in the left column to preview opponent replies.</span>
-                  <span className="lg:hidden">Tap the <strong>👁</strong> button on any move in the left column to preview opponent replies before committing.</span>
+                  <span className="hidden md:inline">Hover over a move in the left column to preview opponent replies.</span>
+                  <span className="md:hidden">Tap the <strong>👁</strong> button on any move in the left column to preview opponent replies before committing.</span>
                 </p>
               </div>
             )}
@@ -2436,32 +2598,48 @@ function App() {
               >
                 Restart
               </button>
-            ) : (
-              <label 
-                className="flex items-center gap-1 cursor-pointer text-[9px] sm:text-[10px] font-semibold text-slate-300 bg-slate-800 px-2 py-1.5 rounded-lg border border-white/10 hover:bg-slate-700 transition-all select-none relative group"
-                title="Toggles tutor popups at the start of your turn"
+            ) : gameMode === 'local-vs-local' ? (
+              <div 
+                className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-semibold text-slate-350 bg-slate-800 px-2 py-1.5 rounded-lg border border-white/10 select-none"
               >
-                <span>Tutor:</span>
-                <input 
-                  type="checkbox" 
-                  checked={quizEnabled} 
-                  onChange={(e) => {
-                    const val = e.target.checked;
-                    setQuizEnabled(val);
-                    localStorage.setItem('chesstrainer_tutor_enabled', String(val));
-                  }} 
-                  className="accent-blue-500 cursor-pointer w-3 h-3"
-                />
-                <span className={quizEnabled ? "text-emerald-400 font-bold" : "text-slate-505"}>
-                  {quizEnabled ? "ON" : "OFF"}
-                </span>
-
-                {/* Subtle visual helper tip to turn off tutor */}
-                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 rounded bg-slate-900 border border-white/10 text-[9px] font-medium leading-normal text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl text-center z-50">
-                  💡 Turn Tutor OFF if you want to play without question dialogs.
-                </span>
-              </label>
+                <span>Local Pass & Play</span>
+              </div>
+            ) : (
+              <div 
+                className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-1.5 rounded-lg border border-emerald-500/20 select-none"
+                title="CCTP (Checks, Captures, Threats, Plans) active feedback system is training you automatically."
+              >
+                <span>CCTP Assist Active</span>
+              </div>
             )}
+
+            {/* Undo Move Button for Learning Modes */}
+            {gameMode !== 'multiplayer' && gameMode !== 'local-vs-local' && game.history().length > 0 && (
+              <button 
+                onClick={undoMove}
+                disabled={isAnimating}
+                className="px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all font-bold text-[9px] sm:text-[10px] text-rose-400 hover:text-rose-300 cursor-pointer flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Undo last move"
+              >
+                <span className="text-base leading-none -mt-0.5">⟲</span> Undo
+              </button>
+            )}
+
+            {/* Tap to Confirm Toggle Button */}
+            <button 
+              onClick={() => {
+                setRequireTapToConfirm(!requireTapToConfirm);
+              }}
+              className={`flex items-center gap-1.5 p-1.5 sm:px-2 rounded-lg border transition-all text-[10px] font-bold uppercase tracking-wider cursor-pointer shrink-0 ${
+                requireTapToConfirm 
+                  ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 hover:bg-blue-500/30' 
+                  : 'bg-slate-800 hover:bg-slate-700 border-white/10 text-slate-400'
+              }`}
+              title={requireTapToConfirm ? "Disable Tap-to-Confirm" : "Enable Tap-to-Confirm (Recommended for touchscreens)"}
+            >
+              <span className="text-sm leading-none -mt-0.5">👆</span>
+              <span className="hidden sm:inline">Confirm</span>
+            </button>
 
             {/* Dark Mode Sun/Moon Button */}
             <button 
@@ -2489,20 +2667,24 @@ function App() {
         </div>
 
         {/* 3-Pane Layout: mobile = board on top + tab panels below; desktop = 3 side-by-side columns */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
           
           {/* Left Column (Your Options): Sidebar on LG screen, Tab Panel on Tablet/Mobile */}
-          <div className={`border-r border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto lg:w-[300px] xl:w-[360px] shrink-0 ${
-            mobileTab === 'mine' ? 'flex h-[42vh] lg:h-auto lg:flex-1' : 'hidden lg:flex'
+          <div className={`border-r border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto md:w-[260px] xl:w-[320px] 2xl:w-[360px] shrink-0 ${
+            mobileTab === 'mine' ? 'flex h-[42vh] md:h-auto md:flex-1' : 'hidden md:flex'
           }`}>
             {leftPanelContent}
           </div>
 
           {/* Middle Column (Chessboard): Fills top of screen on mobile, center on desktop */}
-          <div className="flex-1 bg-slate-955 flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 relative shrink-0 lg:shrink">
+          <div className="flex-1 bg-slate-955 flex flex-col items-center justify-start p-3 sm:p-6 overflow-y-auto relative shrink-0 md:shrink">
             
-            {/* Chessboard framed wrapper - tighter on mobile */}
-            <div className="w-full max-w-[min(85vw,calc(100vh-200px))] sm:max-w-[min(85vw,65vh)] aspect-square rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.2)] border border-slate-700/50 p-1.5 sm:p-2 bg-slate-900/60 backdrop-blur-md relative">
+            {/* Chessboard framed wrapper - optimized bounds for laptop/ipad */}
+            <div className={`w-full aspect-square rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.2)] border border-slate-700/50 p-1.5 sm:p-2 bg-slate-900/60 backdrop-blur-md relative ${
+              (gameMode !== 'multiplayer' && !game.isGameOver())
+                ? 'max-w-[min(90vw,calc(100vh-320px))] md:max-w-[min(100%,calc(100vh-320px))]' 
+                : 'max-w-[min(90vw,calc(100vh-200px))] md:max-w-[min(100%,calc(100vh-200px))]'
+            }`}>
               <CustomChessboard 
                 position={game.fen()} 
                 onSquareClick={onSquareClick}
@@ -2513,6 +2695,7 @@ function App() {
                 arrows={getArrows()}
                 lastMove={lastMove}
               />
+
             </div>
 
             {/* In-game Legend indicator Row - Hidden in multiplayer mode, compact on mobile */}
@@ -2534,10 +2717,13 @@ function App() {
                 </div>
               </div>
             )}
+
+            {/* CCTP HUD Analysis below the Chessboard */}
+            {renderCctpTrainingHUD()}
           </div>
 
           {/* Mobile switcher tab bar */}
-          <div className="flex border-y border-white/10 lg:hidden shrink-0 bg-slate-900 select-none">
+          <div className="flex border-y border-white/10 md:hidden shrink-0 bg-slate-900 select-none">
             <button 
               onClick={() => setMobileTab('mine')}
               className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1 cursor-pointer ${
@@ -2546,7 +2732,7 @@ function App() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              👤 {gameMode === 'multiplayer' ? "Moves" : "Options"}
+              👤 {gameMode === 'multiplayer' || gameMode === 'local-vs-local' ? "Status" : "Options"}
             </button>
             <button 
               onClick={() => setMobileTab('opp')}
@@ -2556,132 +2742,18 @@ function App() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🤖 {gameMode === 'multiplayer' ? "Chat" : "Replies"}
+              🤖 {gameMode === 'multiplayer' || gameMode === 'local-vs-local' ? "Moves" : "Replies"}
             </button>
           </div>
 
           {/* Right Column (Opponent Options): Sidebar on LG screen, Tab Panel on Tablet/Mobile */}
-          <div className={`border-l border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto lg:w-[300px] xl:w-[360px] shrink-0 ${
-            mobileTab === 'opp' ? 'flex h-[42vh] lg:h-auto lg:flex-1' : 'hidden lg:flex'
+          <div className={`border-l border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto md:w-[260px] xl:w-[320px] 2xl:w-[360px] shrink-0 ${
+            mobileTab === 'opp' ? 'flex h-[42vh] md:h-auto md:flex-1' : 'hidden md:flex'
           }`}>
             {rightPanelContent}
           </div>
 
         </div>
-
-        {/* Floating Chat / Tutor Widget - Chatbot Tutor is completely hidden in P2P multiplayer mode */}
-        {gameMode !== 'multiplayer' && activeQuestion && (
-          <div className="fixed bottom-6 right-6 z-50 w-[340px] bg-slate-950 dark:bg-slate-900 border border-slate-800 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden flex flex-col animate-fade-in font-sans">
-            {/* Header */}
-            <div className="bg-slate-900 dark:bg-slate-955 px-4 py-3 flex items-center justify-between border-b border-slate-800 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <span className="text-xl">🤖</span>
-                  <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-sky-500"></span>
-                  </span>
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-slate-100 tracking-wide leading-none">Chess Tutor</h4>
-                  <span className="text-[9px] text-emerald-700 dark:text-emerald-400 font-semibold leading-none mt-0.5 block">Online & Speaking</span>
-                </div>
-              </div>
-
-              {/* Control buttons */}
-              <div className="flex items-center gap-1.5">
-                <button 
-                  onClick={() => {
-                    const newVal = !speechEnabled;
-                    setSpeechEnabled(newVal);
-                    if (!newVal && 'speechSynthesis' in window) {
-                      window.speechSynthesis.cancel();
-                    }
-                  }}
-                  className={`p-1.5 rounded-lg border text-xs transition-all cursor-pointer ${
-                    speechEnabled 
-                      ? 'bg-blue-600/20 border-blue-500/40 text-blue-600 dark:text-blue-400' 
-                      : 'bg-slate-800 dark:bg-slate-900 border-slate-700 dark:border-white/10 text-slate-400 dark:text-slate-300'
-                  }`}
-                  title={speechEnabled ? "Mute Voice" : "Unmute Voice"}
-                >
-                  {speechEnabled ? '🔊' : '🔇'}
-                </button>
-                
-                <button 
-                  onClick={handleContinue}
-                  className="p-1.5 rounded-lg border border-slate-700 dark:border-white/10 bg-slate-800 dark:bg-slate-900 text-slate-400 dark:text-slate-300 hover:text-slate-100 hover:bg-slate-700 transition-all text-xs cursor-pointer"
-                  title="Close Tutor"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            {/* Body */}
-            <div className="p-4 flex-1 flex flex-col overflow-y-auto max-h-[360px] scrollbar-thin bg-slate-950 dark:bg-slate-900">
-              <div className="space-y-3">
-                <div className="flex gap-2 items-start">
-                  <div className="w-6 h-6 rounded-full bg-slate-800 dark:bg-indigo-900/50 flex items-center justify-center text-xs shrink-0 select-none text-slate-100">
-                    🎓
-                  </div>
-                  <div className="bg-slate-900 dark:bg-slate-950 border border-slate-800 dark:border-white/5 rounded-2xl rounded-tl-none p-3 text-xs leading-relaxed text-slate-100">
-                    <p className="font-semibold text-blue-600 dark:text-blue-400 mb-1">Tutor</p>
-                    {activeQuestion.question}
-                  </div>
-                </div>
-
-                {quizFeedback && (
-                  <div className="flex gap-2 items-start animate-fade-in">
-                    <div className="w-6 h-6 rounded-full bg-slate-800 dark:bg-indigo-900/50 flex items-center justify-center text-xs shrink-0 select-none text-slate-100">
-                      {quizFeedback.isCorrect ? '✅' : '❌'}
-                    </div>
-                    <div className={`border rounded-2xl rounded-tl-none p-3 text-xs leading-relaxed ${
-                      quizFeedback.isCorrect 
-                        ? 'bg-emerald-100 dark:bg-emerald-950/40 border-emerald-250/30 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300' 
-                        : 'bg-rose-100 dark:bg-rose-950/40 border-rose-250/30 dark:border-rose-500/20 text-rose-800 dark:text-rose-300'
-                    }`}>
-                      <p className="font-bold mb-1">
-                        {quizFeedback.isCorrect ? 'Correct Assessment!' : 'Incorrect Assessment'}
-                      </p>
-                      {quizFeedback.text}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Action area */}
-              <div className="mt-4 pt-3 border-t border-slate-800 dark:border-white/5">
-                {!quizFeedback ? (
-                  <div className="flex flex-col gap-2">
-                    {activeQuestion.options.map((option, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleAnswer(idx)}
-                        className="w-full p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-left text-xs font-semibold transition-all text-slate-200 dark:text-slate-300 hover:text-slate-100 dark:hover:text-slate-100 cursor-pointer"
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleContinue}
-                    className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
-                  >
-                    Continue Training
-                  </button>
-                )}
-              </div>
-
-              {/* Help hint to turn off the tutor */}
-              <p className="text-[10px] text-slate-500 italic mt-4 text-center leading-normal">
-                💡 Tip: You can disable this tutor anytime using the "Tutor" toggle in the top header.
-              </p>
-
-            </div>
-          </div>
-        )}
 
         {/* 🎉 Confetti / Party Popper Celebration Overlay on Checkmate */}
         {showConfetti && (
@@ -2715,7 +2787,7 @@ function App() {
 
             {/* Winner banner */}
             <div className="absolute inset-0 flex items-center justify-center px-4">
-              <div className="bg-slate-950/90 border border-yellow-400/40 rounded-3xl px-6 sm:px-10 py-6 sm:py-8 text-center shadow-2xl backdrop-blur-md animate-bounce-in max-w-xs w-full">
+              <div className="bg-slate-955/90 border border-yellow-400/40 rounded-3xl px-6 sm:px-10 py-6 sm:py-8 text-center shadow-2xl backdrop-blur-md animate-bounce-in max-w-xs w-full">
                 <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">🎉</div>
                 <h2 className="text-2xl sm:text-3xl font-black text-yellow-400 mb-2">Checkmate!</h2>
                 <p className="text-slate-300 text-sm">
@@ -2725,6 +2797,70 @@ function App() {
                 </p>
                 <p className="text-slate-400 text-xs mt-2 animate-pulse">🎊 Congratulations! 🎊</p>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* CCTP Help Modal */}
+        {showCctpHelp && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in select-none">
+            <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-md w-full shadow-2xl relative font-sans text-slate-100">
+              <button 
+                onClick={() => setShowCctpHelp(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-100 text-lg cursor-pointer focus:outline-none"
+              >
+                ✕
+              </button>
+              
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🧠</span>
+                <h3 className="text-lg font-bold text-slate-100">The CCTP Method</h3>
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                <strong>CCTP</strong> is a mental checklist used by chess players to scan the board systematically before making any move. It ranks search priorities from most forcing to least forcing:
+              </p>
+
+              <div className="space-y-3.5 mb-5">
+                <div className="flex items-start gap-2.5">
+                  <span className="text-sm px-1.5 py-0.5 rounded font-extrabold bg-red-500/20 text-red-400 shrink-0 font-mono">C</span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-200">Checks</h4>
+                    <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">Attacks on the opponent's King. Scan these first because they force immediate responses and can lead to tactical wins or checkmate.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <span className="text-sm px-1.5 py-0.5 rounded font-extrabold bg-amber-500/20 text-amber-400 shrink-0 font-mono">C</span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-200">Captures</h4>
+                    <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">Taking opponent pieces. Look for free pieces or favorable material exchanges next.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <span className="text-sm px-1.5 py-0.5 rounded font-extrabold bg-purple-500/20 text-purple-400 shrink-0 font-mono">T</span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-200">Threats</h4>
+                    <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">Attacking undefended or higher-value pieces. Use threats to create pressure and limit the opponent's options.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <span className="text-sm px-1.5 py-0.5 rounded font-extrabold bg-blue-500/20 text-blue-400 shrink-0 font-mono">P</span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-200">Plans / Pawn Breaks</h4>
+                    <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">Quiet positional moves. If no direct threats or tactics exist, focus on central control, piece development, or pawn structure breaks.</p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowCctpHelp(false)}
+                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all active:scale-95 cursor-pointer shadow-md"
+              >
+                Got it, let's train!
+              </button>
             </div>
           </div>
         )}

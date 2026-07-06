@@ -17,7 +17,9 @@
             "Bb5"
           ]
         }
-      ]
+      ],
+      "popularity": 5,
+      "complexity": 4
     },
     {
       "id": "italian_game",
@@ -36,7 +38,9 @@
             "Bc4"
           ]
         }
-      ]
+      ],
+      "popularity": 5,
+      "complexity": 2
     },
     {
       "id": "sicilian_defense",
@@ -52,7 +56,9 @@
             "c5"
           ]
         }
-      ]
+      ],
+      "popularity": 5,
+      "complexity": 5
     },
     {
       "id": "french_defense",
@@ -68,7 +74,9 @@
             "e6"
           ]
         }
-      ]
+      ],
+      "popularity": 4,
+      "complexity": 3
     },
     {
       "id": "caro_kann_defense",
@@ -84,7 +92,9 @@
             "c6"
           ]
         }
-      ]
+      ],
+      "popularity": 4,
+      "complexity": 3
     },
     {
       "id": "queen_s_gambit",
@@ -101,7 +111,9 @@
             "c4"
           ]
         }
-      ]
+      ],
+      "popularity": 5,
+      "complexity": 3
     },
     {
       "id": "slav_defense",
@@ -119,7 +131,9 @@
             "c6"
           ]
         }
-      ]
+      ],
+      "popularity": 4,
+      "complexity": 3
     },
     {
       "id": "king_s_indian_defense",
@@ -137,7 +151,9 @@
             "g6"
           ]
         }
-      ]
+      ],
+      "popularity": 4,
+      "complexity": 5
     },
     {
       "id": "english_opening",
@@ -152,7 +168,9 @@
             "c4"
           ]
         }
-      ]
+      ],
+      "popularity": 4,
+      "complexity": 4
     },
     {
       "id": "nimzo_indian_defense",
@@ -172,7 +190,9 @@
             "Bb4"
           ]
         }
-      ]
+      ],
+      "popularity": 4,
+      "complexity": 4
     },
     {
       "id": "scotch_game",
@@ -191,7 +211,9 @@
             "d4"
           ]
         }
-      ]
+      ],
+      "popularity": 4,
+      "complexity": 2
     },
     {
       "id": "london_system",
@@ -208,7 +230,9 @@
             "Bf4"
           ]
         }
-      ]
+      ],
+      "popularity": 5,
+      "complexity": 1
     },
     {
       "id": "scandinavian_defense",
@@ -224,7 +248,9 @@
             "d5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 2
     },
     {
       "id": "alekhine_s_defense",
@@ -240,7 +266,9 @@
             "Nf6"
           ]
         }
-      ]
+      ],
+      "popularity": 2,
+      "complexity": 4
     },
     {
       "id": "pirc_defense",
@@ -256,7 +284,9 @@
             "d6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 4
     },
     {
       "id": "grunfeld_defense",
@@ -276,7 +306,9 @@
             "d5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "queen_s_indian_defense",
@@ -296,7 +328,9 @@
             "b6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "king_s_gambit",
@@ -313,7 +347,9 @@
             "f4"
           ]
         }
-      ]
+      ],
+      "popularity": 2,
+      "complexity": 4
     },
     {
       "id": "reti_opening",
@@ -328,7 +364,9 @@
             "Nf3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 4
     },
     {
       "id": "dutch_defense",
@@ -344,7 +382,9 @@
             "f5"
           ]
         }
-      ]
+      ],
+      "popularity": 2,
+      "complexity": 5
     },
     {
       "id": "petrov_s_defense",
@@ -362,7 +402,9 @@
             "Nf6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "bird_s_opening",
@@ -377,7 +419,9 @@
             "f4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "benoni_defense",
@@ -395,7 +439,9 @@
             "c5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "vienna_game",
@@ -412,7 +458,9 @@
             "Nc3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 2
     },
     {
       "id": "modern_defense",
@@ -428,7 +476,9 @@
             "g6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 4
     },
     {
       "id": "nimzowitsch_larsen_attack",
@@ -443,7 +493,9 @@
             "b3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "polish_opening",
@@ -458,7 +510,9 @@
             "b4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "trompowsky_attack",
@@ -475,7 +529,9 @@
             "Bg5"
           ]
         }
-      ]
+      ],
+      "popularity": 2,
+      "complexity": 3
     },
     {
       "id": "catalan_opening",
@@ -494,7 +550,9 @@
             "g3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 5
     },
     {
       "id": "colle_system",
@@ -513,7 +571,9 @@
             "e3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "bogo_indian_defense",
@@ -533,7 +593,9 @@
             "Bb4+"
           ]
         }
-      ]
+      ],
+      "popularity": 2,
+      "complexity": 3
     },
     {
       "id": "philidor_defense",
@@ -551,7 +613,9 @@
             "d6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "evans_gambit",
@@ -572,7 +636,9 @@
             "b4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "four_knights_game",
@@ -592,7 +658,9 @@
             "Nf6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "benko_gambit",
@@ -612,7 +680,9 @@
             "b5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "budapest_gambit",
@@ -630,7 +700,9 @@
             "e5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "albin_counter_gambit",
@@ -648,7 +720,9 @@
             "e5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "smith_morra_gambit",
@@ -667,7 +741,9 @@
             "c3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "grob_s_attack",
@@ -682,7 +758,9 @@
             "g4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "torre_attack",
@@ -701,7 +779,9 @@
             "Bg5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "chigorin_defense",
@@ -719,7 +799,9 @@
             "Nc6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "stonewall_attack",
@@ -740,7 +822,9 @@
             "c3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "giuoco_piano",
@@ -760,7 +844,9 @@
             "Bc5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "ponziani_opening",
@@ -779,7 +865,9 @@
             "c3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "three_knights_game",
@@ -798,7 +886,9 @@
             "Nc3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "two_knights_defense",
@@ -818,7 +908,9 @@
             "Nf6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "old_indian_defense",
@@ -836,7 +928,9 @@
             "d6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "blackmar_diemer_gambit",
@@ -853,7 +947,9 @@
             "e4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "vienna_gambit",
@@ -872,7 +968,9 @@
             "f4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "grand_prix_attack",
@@ -891,7 +989,9 @@
             "f4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "closed_sicilian",
@@ -908,7 +1008,9 @@
             "Nc3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "alapin_variation",
@@ -925,7 +1027,9 @@
             "c3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "sicilian_dragon",
@@ -949,7 +1053,9 @@
             "g6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "najdorf_sicilian",
@@ -973,7 +1079,9 @@
             "a6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "french_advance",
@@ -992,7 +1100,9 @@
             "e5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "french_exchange",
@@ -1011,7 +1121,9 @@
             "exd5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "french_tarrasch",
@@ -1030,7 +1142,9 @@
             "Nd2"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "caro_kann_advance",
@@ -1049,7 +1163,9 @@
             "e5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "caro_kann_exchange",
@@ -1068,7 +1184,9 @@
             "exd5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "king_s_indian_attack",
@@ -1085,7 +1203,9 @@
             "g3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "english_four_knights",
@@ -1105,7 +1225,9 @@
             "Nf6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "symmetrical_english",
@@ -1121,7 +1243,9 @@
             "c5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "queen_s_gambit_accepted",
@@ -1139,7 +1263,9 @@
             "dxc4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "queen_s_gambit_declined",
@@ -1157,7 +1283,9 @@
             "e6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "slav_exchange",
@@ -1176,7 +1304,9 @@
             "cxd5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "semi_slav_defense",
@@ -1198,7 +1328,9 @@
             "e6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "king_s_fianchetto",
@@ -1213,7 +1345,9 @@
             "g3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "dunst_opening",
@@ -1228,7 +1362,9 @@
             "Nc3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "mieses_opening",
@@ -1243,7 +1379,9 @@
             "d3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "van_t_kruijs_opening",
@@ -1258,7 +1396,9 @@
             "e3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "barnes_opening",
@@ -1273,7 +1413,9 @@
             "f3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "ware_opening",
@@ -1288,7 +1430,9 @@
             "a4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "durkin_opening",
@@ -1303,7 +1447,9 @@
             "Na3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "amar_opening",
@@ -1318,7 +1464,9 @@
             "Nh3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "clemenz_opening",
@@ -1333,7 +1481,9 @@
             "h3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "desprez_opening",
@@ -1348,7 +1498,9 @@
             "h4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "sodium_attack",
@@ -1363,7 +1515,9 @@
             "Na3"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "owen_s_defense",
@@ -1379,7 +1533,9 @@
             "b6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "st_george_defense",
@@ -1395,7 +1551,9 @@
             "a6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "borg_defense",
@@ -1411,7 +1569,9 @@
             "g5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "latvian_gambit",
@@ -1429,7 +1589,9 @@
             "f5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "elephant_gambit",
@@ -1447,7 +1609,9 @@
             "d5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "damiano_defense",
@@ -1465,7 +1629,9 @@
             "f6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "vienna_variation_qgd_",
@@ -1487,7 +1653,9 @@
             "Bb4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "tarrasch_defense",
@@ -1507,7 +1675,9 @@
             "c5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "marshall_attack",
@@ -1537,7 +1707,9 @@
             "d5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "berlin_defense",
@@ -1557,7 +1729,9 @@
             "Nf6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "schliemann_defense",
@@ -1577,7 +1751,9 @@
             "f5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "steinitz_defense",
@@ -1597,7 +1773,9 @@
             "d6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "exchange_ruy_lopez",
@@ -1618,7 +1796,9 @@
             "Bxc6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "modern_benoni",
@@ -1638,7 +1818,9 @@
             "e6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "botvinnik_system",
@@ -1661,7 +1843,9 @@
             "e4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "winawer_variation",
@@ -1681,7 +1865,9 @@
             "Bb4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "rubinstein_variation",
@@ -1701,7 +1887,9 @@
             "dxe4"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "classical_french",
@@ -1721,7 +1909,9 @@
             "Nf6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "accelerated_dragon",
@@ -1743,7 +1933,9 @@
             "g6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "hyper_accelerated_dragon",
@@ -1761,7 +1953,9 @@
             "g6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "taimanov_sicilian",
@@ -1783,7 +1977,9 @@
             "Nc6"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     },
     {
       "id": "sveshnikov_sicilian",
@@ -1807,7 +2003,9 @@
             "e5"
           ]
         }
-      ]
+      ],
+      "popularity": 3,
+      "complexity": 3
     }
   ],
   "midgames": [
