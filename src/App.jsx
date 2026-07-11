@@ -1333,12 +1333,15 @@ function App() {
   const renderMoveList = (title, moves, colorClass, isInteractive = true) => {
     if (moves.length === 0) return null;
     const pieceNames = { p: 'Pawn', n: 'Knight', b: 'Bishop', r: 'Rook', q: 'Queen', k: 'King' };
+    const displayedMoves = moves.slice(0, 3);
 
     return (
       <div className="mb-6 animate-fade-in">
-        <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${colorClass}`}>{title}</h3>
+        <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${colorClass}`}>
+          {title} {moves.length > 3 && <span className="text-[10px] lowercase text-slate-500 font-normal ml-2">(top 3 of {moves.length})</span>}
+        </h3>
         <div className="flex flex-col gap-2">
-          {moves.map((move, idx) => {
+          {displayedMoves.map((move, idx) => {
             const friendlyText = explainMove(game.fen(), move, userColor);
 
             const isSelected = isInteractive && selectedMovePreview?.from === move.from && selectedMovePreview?.to === move.to;
@@ -1997,6 +2000,10 @@ function App() {
                     game.load("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
                     forceUpdate();
                     setView('trainer');
+                  } else if (selectedStrategy.category !== 'openings') {
+                    game.load(selectedStrategy.startingFen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+                    forceUpdate();
+                    setView('trainer');
                   } else if (selectedStrategy.color === 'black') {
                     setView('opponent-strategy-select');
                   } else {
@@ -2269,7 +2276,7 @@ function App() {
             </button>
           </div>
 
-          <div className="glass-panel max-w-sm sm:max-w-md w-full p-6 sm:p-8 shadow-2xl flex flex-col items-center font-sans my-6">
+          <div className="glass-panel max-w-sm md:max-w-3xl w-full p-6 sm:p-8 shadow-2xl flex flex-col items-center font-sans my-6">
             <div className="w-12 h-12 rounded-2xl bg-violet-555/10 dark:bg-violet-500/10 text-violet-650 dark:text-violet-400 flex items-center justify-center text-3xl mb-4 font-bold animate-pulse">
               👥
             </div>
@@ -2281,87 +2288,89 @@ function App() {
               Host a game or join a friend. Live chessboard coordinates, engine hints, and instant chat.
             </p>
 
-            {/* Connection Status Indicator */}
-            <div className="w-full flex flex-col items-center p-4 bg-slate-905/60 border border-white/5 rounded-2xl mb-6">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">Your Connection Key</span>
-              {connectionStatus === 'connecting' ? (
-                <div className="flex items-center gap-2 text-xs text-violet-500 animate-pulse">
-                  <span className="animate-spin">🌀</span> Generating peer key...
-                </div>
-              ) : (
-                <div className="flex flex-col items-center w-full gap-3">
-                  {/* Peer ID text */}
-                  <code className="text-lg font-black font-mono text-slate-200 select-all tracking-wider px-3 py-1 bg-slate-950/80 rounded border border-white/5">
-                    {peerId || "---"}
-                  </code>
+            <div className="w-full flex flex-col md:flex-row gap-8 items-start">
+              {/* Left Side: Host (Connection Key) */}
+              <div className="flex-1 w-full flex flex-col items-center p-4 bg-slate-905/60 border border-white/5 rounded-2xl">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">Your Connection Key</span>
+                {connectionStatus === 'connecting' ? (
+                  <div className="flex items-center gap-2 text-xs text-violet-500 animate-pulse">
+                    <span className="animate-spin">🌀</span> Generating peer key...
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center w-full gap-3">
+                    {/* Peer ID text */}
+                    <code className="text-lg font-black font-mono text-slate-200 select-all tracking-wider px-3 py-1 bg-slate-950/80 rounded border border-white/5">
+                      {peerId || "---"}
+                    </code>
 
-                  {/* QR Code - encodes a direct URL to the site with the peer ID pre-filled */}
-                  {peerId && (() => {
-                    const connectUrl = `${window.location.origin}${window.location.pathname}?peer=${peerId}`;
-                    return (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="p-2 sm:p-3 bg-white rounded-xl shadow-md">
-                          <QRCodeSVG
-                            value={connectUrl}
-                            size={130}
-                            bgColor="#ffffff"
-                            fgColor="#1e293b"
-                            level="M"
-                            includeMargin={false}
-                          />
+                    {/* QR Code - encodes a direct URL to the site with the peer ID pre-filled */}
+                    {peerId && (() => {
+                      const connectUrl = `${window.location.origin}${window.location.pathname}?peer=${peerId}`;
+                      return (
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="p-2 sm:p-3 bg-white rounded-xl shadow-md">
+                            <QRCodeSVG
+                              value={connectUrl}
+                              size={130}
+                              bgColor="#ffffff"
+                              fgColor="#1e293b"
+                              level="M"
+                              includeMargin={false}
+                            />
+                          </div>
+                          <p className="text-[10px] text-slate-500 text-center max-w-[200px] leading-relaxed">
+                            Friend scans QR → opens site → auto-connects
+                          </p>
+
+                          {/* Copy invite link button */}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(peerId);
+                                setCopyToast(true);
+                                setTimeout(() => setCopyToast(false), 2000);
+                              }}
+                              className="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-[10px] font-bold uppercase transition-all shadow-md active:scale-95 cursor-pointer border border-white/10"
+                            >
+                              {copyToast ? '✓ Copied!' : 'Copy ID'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                const link = `${window.location.origin}${window.location.pathname}?peer=${peerId}`;
+                                navigator.clipboard.writeText(link);
+                                setCopyToast(true);
+                                setTimeout(() => setCopyToast(false), 2000);
+                              }}
+                              className="px-3 py-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-slate-100 text-[10px] font-bold uppercase transition-all shadow-md active:scale-95 cursor-pointer"
+                            >
+                              {copyToast ? '✓ Copied!' : 'Copy Link'}
+                            </button>
+                          </div>
                         </div>
-                        <p className="text-[10px] text-slate-500 text-center max-w-[200px] leading-relaxed">
-                          Friend scans QR → opens site → auto-connects
-                        </p>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
 
-                        {/* Copy invite link button */}
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(peerId);
-                              setCopyToast(true);
-                              setTimeout(() => setCopyToast(false), 2000);
-                            }}
-                            className="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-100 text-[10px] font-bold uppercase transition-all shadow-md active:scale-95 cursor-pointer border border-white/10"
-                          >
-                            {copyToast ? '✓ Copied!' : 'Copy ID'}
-                          </button>
-                          <button
-                            onClick={() => {
-                              const link = `${window.location.origin}${window.location.pathname}?peer=${peerId}`;
-                              navigator.clipboard.writeText(link);
-                              setCopyToast(true);
-                              setTimeout(() => setCopyToast(false), 2000);
-                            }}
-                            className="px-3 py-1 rounded-lg bg-violet-600 hover:bg-violet-500 text-slate-100 text-[10px] font-bold uppercase transition-all shadow-md active:scale-95 cursor-pointer"
-                          >
-                            {copyToast ? '✓ Copied!' : 'Copy Link'}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-            </div>
-
-            {/* Connect Input */}
-            <div className="w-full border-t border-white/10 pt-6 flex flex-col gap-3">
-              <label className="text-xs font-semibold text-slate-400">Join a Friend</label>
-              <input 
-                type="text" 
-                placeholder="Paste friend's Peer ID here..."
-                value={peerTargetId}
-                onChange={(e) => setPeerTargetId(e.target.value)}
-                className="w-full p-3 rounded-xl bg-slate-955 border border-white/10 text-slate-100 text-xs font-mono tracking-widest text-center focus:outline-none focus:border-violet-500 transition-all placeholder:text-slate-655"
-              />
-              <button 
-                disabled={!peerId || connectionStatus === 'connecting'}
-                onClick={connectToFriend}
-                className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-750 text-slate-100 font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                Connect to Friend
-              </button>
+              {/* Right Side: Join Input */}
+              <div className="flex-1 w-full flex flex-col gap-3 justify-center md:pt-4">
+                <label className="text-xs font-semibold text-slate-400">Join a Friend</label>
+                <input 
+                  type="text" 
+                  placeholder="Paste friend's Peer ID here..."
+                  value={peerTargetId}
+                  onChange={(e) => setPeerTargetId(e.target.value)}
+                  className="w-full p-3 rounded-xl bg-slate-955 border border-white/10 text-slate-100 text-xs font-mono tracking-widest text-center focus:outline-none focus:border-violet-500 transition-all placeholder:text-slate-655"
+                />
+                <button 
+                  disabled={!peerId || connectionStatus === 'connecting'}
+                  onClick={connectToFriend}
+                  className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-750 text-slate-100 font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  Connect to Friend
+                </button>
+              </div>
             </div>
 
             <button className="mt-8 text-slate-400 underline block text-xs hover:text-slate-100" onClick={() => setView('home')}>
@@ -2670,7 +2679,7 @@ function App() {
         <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
           
           {/* Left Column (Your Options): Sidebar on LG screen, Tab Panel on Tablet/Mobile */}
-          <div className={`border-r border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto md:w-[260px] xl:w-[320px] 2xl:w-[360px] shrink-0 ${
+          <div className={`border-r border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto md:w-[220px] xl:w-[280px] 2xl:w-[320px] shrink-0 ${
             mobileTab === 'mine' ? 'flex h-[42vh] md:h-auto md:flex-1' : 'hidden md:flex'
           }`}>
             {leftPanelContent}
@@ -2682,8 +2691,8 @@ function App() {
             {/* Chessboard framed wrapper - optimized bounds for laptop/ipad */}
             <div className={`w-full aspect-square rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.2)] border border-slate-700/50 p-1.5 sm:p-2 bg-slate-900/60 backdrop-blur-md relative ${
               (gameMode !== 'multiplayer' && !game.isGameOver())
-                ? 'max-w-[min(90vw,calc(100vh-320px))] md:max-w-[min(100%,calc(100vh-320px))]' 
-                : 'max-w-[min(90vw,calc(100vh-200px))] md:max-w-[min(100%,calc(100vh-200px))]'
+                ? 'max-w-[min(95vw,calc(100vh-280px))] md:max-w-[min(100%,calc(100vh-280px))] xl:max-w-[min(100%,calc(100vh-240px))]' 
+                : 'max-w-[min(95vw,calc(100vh-160px))] md:max-w-[min(100%,calc(100vh-160px))]'
             }`}>
               <CustomChessboard 
                 position={game.fen()} 
@@ -2747,7 +2756,7 @@ function App() {
           </div>
 
           {/* Right Column (Opponent Options): Sidebar on LG screen, Tab Panel on Tablet/Mobile */}
-          <div className={`border-l border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto md:w-[260px] xl:w-[320px] 2xl:w-[360px] shrink-0 ${
+          <div className={`border-l border-white/10 bg-slate-900/40 p-4 sm:p-6 flex flex-col overflow-y-auto md:w-[220px] xl:w-[280px] 2xl:w-[320px] shrink-0 ${
             mobileTab === 'opp' ? 'flex h-[42vh] md:h-auto md:flex-1' : 'hidden md:flex'
           }`}>
             {rightPanelContent}
